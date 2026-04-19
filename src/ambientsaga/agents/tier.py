@@ -15,16 +15,16 @@ The tier manager handles:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Callable
 from collections import defaultdict
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
-from ambientsaga.types import AgentTier, EntityID, Pos2D, SignalType
 from ambientsaga.config import AgentConfig
+from ambientsaga.types import AgentTier, EntityID, Pos2D
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.world.chunk import ChunkManager
+    from ambientsaga.world.state import World
 
 
 class TierManager:
@@ -42,8 +42,8 @@ class TierManager:
     def __init__(
         self,
         config: AgentConfig,
-        world: "World",
-        chunk_manager: "ChunkManager",
+        world: World,
+        chunk_manager: ChunkManager,
     ) -> None:
         self.config = config
         self.world = world

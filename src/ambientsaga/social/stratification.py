@@ -13,14 +13,15 @@ Handles the emergent formation of social classes and hierarchies from agent inte
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, TYPE_CHECKING
 from enum import Enum, auto
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
 
-from ambientsaga.types import EntityID, new_entity_id
+from ambientsaga.types import EntityID
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
+    pass
 
 
 class SocialClass(Enum):

@@ -18,7 +18,6 @@ Key design goals:
 
 from __future__ import annotations
 
-import math
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum, auto
@@ -26,11 +25,11 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from ambientsaga.types import EntityID, Pos2D, new_entity_id
+from ambientsaga.types import EntityID, new_entity_id
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
-    from ambientsaga.agents.agent import Agent
+    from ambientsaga.config import CultureConfig
 
 
 # ---------------------------------------------------------------------------
@@ -91,7 +90,7 @@ class Vocabulary:
         """Get the concept a word represents."""
         return self.words.get(word, {}).get("concept")
 
-    def merge_vocabulary(self, other: "Vocabulary", rate: float) -> None:
+    def merge_vocabulary(self, other: Vocabulary, rate: float) -> None:
         """
         Merge another vocabulary into this one.
 
@@ -290,7 +289,7 @@ class Language:
             if word not in dialect.vocabulary.words:
                 dialect.vocabulary.add_word(word, concept, phonemes, frequency)
 
-    def calculate_mutual_intelligibility(self, other: "Language") -> float:
+    def calculate_mutual_intelligibility(self, other: Language) -> float:
         """
         Calculate mutual intelligibility between this and another language.
 
@@ -389,7 +388,7 @@ class LanguageSystem:
     """
 
     def __init__(
-        self, config: CultureConfig, world: "World", seed: int = 42
+        self, config: CultureConfig, world: World, seed: int = 42
     ) -> None:
         self.config = config
         self.world = world

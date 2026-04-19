@@ -10,11 +10,10 @@
 
 from __future__ import annotations
 
-import numpy as np
 import random
 from dataclasses import dataclass, field
-from typing import Any
 from enum import Enum, auto
+from typing import Any
 
 
 class CognitiveBias(Enum):
@@ -70,7 +69,7 @@ class PersonalityTraits:
     patience: float = 0.3         # 耐心
 
     @classmethod
-    def random(cls) -> "PersonalityTraits":
+    def random(cls) -> PersonalityTraits:
         """随机生成人格特质"""
         return cls(
             openness=random.uniform(0.2, 0.8),

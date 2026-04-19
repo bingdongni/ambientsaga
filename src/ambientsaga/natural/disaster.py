@@ -13,12 +13,13 @@ Models:
 
 from __future__ import annotations
 
-import numpy as np
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ambientsaga.config import DisasterConfig
-from ambientsaga.types import TerrainType, SignalType, Pos2D, EventPriority
+from ambientsaga.types import EventPriority, Pos2D, SignalType, TerrainType
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -113,7 +114,7 @@ class DisasterSystem:
                         if elev - avg_neighbor > 300:
                             self._plate_boundary[y, x] = 1.0
 
-    def update(self, tick: int, world: "World") -> list[Disaster]:
+    def update(self, tick: int, world: World) -> list[Disaster]:
         """
         Update disasters for the current tick.
 
@@ -150,7 +151,7 @@ class DisasterSystem:
 
         return new_disasters
 
-    def _check_earthquakes(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_earthquakes(self, tick: int, world: World) -> list[Disaster]:
         """Check for earthquake occurrence."""
         disasters: list[Disaster] = []
 
@@ -194,7 +195,7 @@ class DisasterSystem:
         disasters.append(disaster)
         return disasters
 
-    def _apply_earthquake_effects(self, disaster: Disaster, world: "World") -> None:
+    def _apply_earthquake_effects(self, disaster: Disaster, world: World) -> None:
         """Apply earthquake effects to the world."""
         # Destroy buildings (reduce organization population)
         for x, y in disaster.affected_tiles:
@@ -220,7 +221,7 @@ class DisasterSystem:
             duration=100,
         )
 
-    def _check_volcanoes(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_volcanoes(self, tick: int, world: World) -> list[Disaster]:
         """Check for volcanic eruption."""
         disasters: list[Disaster] = []
 
@@ -270,7 +271,7 @@ class DisasterSystem:
 
         return disasters
 
-    def _check_floods(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_floods(self, tick: int, world: World) -> list[Disaster]:
         """Check for flood events."""
         disasters: list[Disaster] = []
 
@@ -321,7 +322,7 @@ class DisasterSystem:
 
         return disasters
 
-    def _check_droughts(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_droughts(self, tick: int, world: World) -> list[Disaster]:
         """Check for drought events."""
         disasters: list[Disaster] = []
 
@@ -368,7 +369,7 @@ class DisasterSystem:
 
         return disasters
 
-    def _check_wildfires(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_wildfires(self, tick: int, world: World) -> list[Disaster]:
         """Check for wildfire events."""
         disasters: list[Disaster] = []
 
@@ -419,7 +420,7 @@ class DisasterSystem:
 
         return disasters
 
-    def _check_plagues(self, tick: int, world: "World") -> list[Disaster]:
+    def _check_plagues(self, tick: int, world: World) -> list[Disaster]:
         """Check for plague/disease outbreaks."""
         disasters: list[Disaster] = []
 
@@ -467,7 +468,7 @@ class DisasterSystem:
         return disasters
 
     def _get_affected_area(
-        self, x: int, y: int, radius: int, world: "World"
+        self, x: int, y: int, radius: int, world: World
     ) -> list[tuple[int, int]]:
         """Get list of tiles affected by a disaster."""
         affected: list[tuple[int, int]] = []
@@ -489,7 +490,7 @@ class DisasterSystem:
         disaster_type: str,
         magnitude: float,
         affected: list[tuple[int, int]],
-        world: "World",
+        world: World,
     ) -> int:
         """Estimate casualties from a disaster."""
         # Base casualties from magnitude
@@ -517,7 +518,7 @@ class DisasterSystem:
         casualties = int(base * area_factor * human_density * self._rng.uniform(0.5, 1.5))
         return max(0, casualties)
 
-    def _generate_cascades(self, disaster: Disaster, world: "World") -> list[Disaster]:
+    def _generate_cascades(self, disaster: Disaster, world: World) -> list[Disaster]:
         """Generate cascading disasters."""
         cascades: list[Disaster] = []
 

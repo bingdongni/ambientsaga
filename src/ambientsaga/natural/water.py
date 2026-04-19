@@ -12,8 +12,9 @@ Models the complete water cycle:
 
 from __future__ import annotations
 
-import numpy as np
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 from ambientsaga.config import HydrologyConfig
 from ambientsaga.types import TerrainType

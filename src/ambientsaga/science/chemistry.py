@@ -15,9 +15,7 @@ Biology emerges from chemistry (molecular systems).
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
-from typing import Optional, Callable
 from enum import Enum
 
 
@@ -85,7 +83,7 @@ class Substance:
         else:
             return "gas"
 
-    def react_with(self, other: Substance) -> Optional[Reaction]:
+    def react_with(self, other: Substance) -> Reaction | None:
         """Check if this substance can react with another."""
         # Simplified reaction rules
         reactions = {
@@ -393,7 +391,7 @@ class ChemistryEngine:
         )
         self.substances["ADP"] = adp
 
-    def get_substance(self, substance_id: str) -> Optional[Substance]:
+    def get_substance(self, substance_id: str) -> Substance | None:
         """Get a substance by ID."""
         return self.substances.get(substance_id)
 

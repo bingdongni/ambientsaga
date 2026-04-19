@@ -13,20 +13,18 @@ Production is organized into WorkSites that agents interact with.
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Any
 from dataclasses import dataclass, field
 from enum import Enum, auto
-import random
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
 
 from ambientsaga.config import EconomyConfig
-from ambientsaga.types import (
-    EntityID, Pos2D, ResourceType, new_entity_id, TerrainType
-)
+from ambientsaga.types import EntityID, Pos2D, ResourceType, TerrainType, new_entity_id
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.agents.agent import Agent
+    from ambientsaga.world.state import World
 
 
 # ---------------------------------------------------------------------------
@@ -73,8 +71,8 @@ class Recipe:
 
     def can_produce(
         self,
-        agent: "Agent",
-        world: "World",
+        agent: Agent,
+        world: World,
         inventory: dict[ResourceType, float],
     ) -> bool:
         """Check if an agent can produce this recipe."""
@@ -99,8 +97,8 @@ class Recipe:
 
     def get_efficiency(
         self,
-        agent: "Agent",
-        world: "World",
+        agent: Agent,
+        world: World,
         bonuses: dict[str, float] | None = None,
     ) -> float:
         """Calculate production efficiency for an agent."""
@@ -124,8 +122,8 @@ class Recipe:
 
     def estimate_output(
         self,
-        agent: "Agent",
-        world: "World",
+        agent: Agent,
+        world: World,
         input_amounts: dict[ResourceType, float],
     ) -> dict[ResourceType, float]:
         """Estimate output for given inputs and agent."""
@@ -320,7 +318,7 @@ class Workshop(WorkSite):
         self.progress = 0.0
         return True
 
-    def work(self, agent: "Agent", delta_progress: float) -> float:
+    def work(self, agent: Agent, delta_progress: float) -> float:
         """Perform work on the active recipe. Returns accumulated progress."""
         if self.active_recipe is None:
             return 0.0
@@ -340,7 +338,7 @@ class Workshop(WorkSite):
         return 0.0
 
     def complete_production(
-        self, agent: "Agent"
+        self, agent: Agent
     ) -> dict[ResourceType, float] | None:
         """Complete the current production cycle and return outputs."""
         if self.progress < self.active_recipe.duration_ticks:
@@ -381,7 +379,7 @@ class ProductionSystem:
     """
 
     def __init__(
-        self, config: EconomyConfig, world: "World", seed: int = 42
+        self, config: EconomyConfig, world: World, seed: int = 42
     ) -> None:
         self.config = config
         self.world = world
@@ -681,7 +679,7 @@ class ProductionSystem:
         return [r for r in self._recipes.values() if r.production_type == production_type]
 
     def get_available_recipes(
-        self, agent: "Agent", inventory: dict[ResourceType, float]
+        self, agent: Agent, inventory: dict[ResourceType, float]
     ) -> list[tuple[Recipe, float]]:
         """Get all recipes an agent can produce, with efficiency scores."""
         results: list[tuple[Recipe, float]] = []
@@ -862,7 +860,7 @@ class ProductionSystem:
 
     def work_at_site(
         self,
-        agent: "Agent",
+        agent: Agent,
         site: WorkSite,
         tick: int,
     ) -> dict[ResourceType, float] | None:
@@ -912,7 +910,7 @@ class ProductionSystem:
 
     def work_at_farm(
         self,
-        agent: "Agent",
+        agent: Agent,
         farm: Farm,
         tick: int,
     ) -> dict[ResourceType, float] | None:

@@ -20,17 +20,18 @@ Key design goals:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Any
+import hashlib
 from dataclasses import dataclass, field
 from enum import Enum, auto
-import hashlib
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
 
 from ambientsaga.config import CultureConfig
-from ambientsaga.types import EntityID, Pos2D, new_entity_id
+from ambientsaga.types import EntityID, new_entity_id
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
+    pass
 
 
 # ---------------------------------------------------------------------------

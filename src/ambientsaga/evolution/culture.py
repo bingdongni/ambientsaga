@@ -26,9 +26,8 @@ The culture engine enables:
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass, field
-from typing import Optional
 from collections import defaultdict
+from dataclasses import dataclass, field
 
 from .genome import BehaviorGenome, Gene
 from .variation import VariationEngine
@@ -76,9 +75,9 @@ class CulturalEvent:
     event_type: str  # "observation", "copy", "teaching", "innovation", "norm_emergence"
     tick: int
     agent_id: str
-    target_agent_id: Optional[str]
-    pattern_id: Optional[str]
-    gene_hash: Optional[str]
+    target_agent_id: str | None
+    pattern_id: str | None
+    gene_hash: str | None
     success: bool
     details: dict = field(default_factory=dict)
 
@@ -103,14 +102,14 @@ class CultureEngine:
 
     def __init__(
         self,
-        variation_engine: Optional[VariationEngine] = None,
+        variation_engine: VariationEngine | None = None,
         observation_probability: float = 0.3,
         teaching_probability: float = 0.1,
         learning_probability: float = 0.5,
         imitation_bias: float = 0.8,
         prestige_bias: float = 0.3,
         cultural_mutation_rate: float = 0.05,
-        rng: Optional[random.Random] = None,
+        rng: random.Random | None = None,
     ):
         """
         Initialize the culture engine.
@@ -158,9 +157,9 @@ class CultureEngine:
         observed_id: str,
         observer_id: str,
         tick: int,
-        interaction_context: Optional[str] = None,
+        interaction_context: str | None = None,
         require_success: bool = True,
-    ) -> Optional[BehaviorGenome]:
+    ) -> BehaviorGenome | None:
         """
         An agent observes another agent and may learn from them.
 
@@ -221,9 +220,9 @@ class CultureEngine:
         observer_id: str,
         observed_id: str,
         tick: int,
-        context: Optional[str],
+        context: str | None,
         copy_probability: float = 0.5,
-    ) -> Optional[BehaviorGenome]:
+    ) -> BehaviorGenome | None:
         """Copy a random gene from the observed agent."""
         if self.rng.random() > copy_probability:
             return None
@@ -281,9 +280,9 @@ class CultureEngine:
         observer_id: str,
         observed_id: str,
         tick: int,
-        context: Optional[str],
+        context: str | None,
         copy_probability: float = 0.5,
-    ) -> Optional[BehaviorGenome]:
+    ) -> BehaviorGenome | None:
         """Only copy genes that are more successful than our own."""
         if self.rng.random() > copy_probability * observed_success:
             return None
@@ -356,8 +355,8 @@ class CultureEngine:
         learner_genome: BehaviorGenome,
         learner_id: str,
         tick: int,
-        context: Optional[str] = None,
-    ) -> Optional[BehaviorGenome]:
+        context: str | None = None,
+    ) -> BehaviorGenome | None:
         """
         Active teaching: an agent deliberately shares knowledge.
 
@@ -440,7 +439,7 @@ class CultureEngine:
         gene: Gene,
         agent_id: str,
         tick: int,
-        context: Optional[str],
+        context: str | None,
     ) -> None:
         """Track a cultural pattern (emergent behavior)."""
         gene_hash = gene.get_hash()
@@ -473,7 +472,7 @@ class CultureEngine:
         base = gene.gene_type.name.lower()
 
         if gene.gene_type.name.startswith("IF_"):
-            return f"conditional_{gene.condition.name.lower()}" if hasattr(gene, 'condition') else f"conditional_behavior"
+            return f"conditional_{gene.condition.name.lower()}" if hasattr(gene, 'condition') else "conditional_behavior"
         elif gene.children:
             return f"complex_{base}"
         else:

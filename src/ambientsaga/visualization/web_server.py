@@ -13,21 +13,18 @@ with world state streamed from this server via WebSocket.
 
 from __future__ import annotations
 
-import json
 import asyncio
+import json
+import logging
 import threading
-from typing import TYPE_CHECKING, Any, Callable
+import time
 from dataclasses import dataclass
 from enum import Enum, auto
-import time
-import logging
-import weakref
-
-from ambientsaga.types import TerrainType, Pos2D
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.config import VisualizationConfig
+    from ambientsaga.world.state import World
 
 logger = logging.getLogger(__name__)
 
@@ -104,8 +101,8 @@ class WebServer:
 
     def __init__(
         self,
-        world: "World",
-        config: "VisualizationConfig",
+        world: World,
+        config: VisualizationConfig,
         host: str = "localhost",
         port: int = 8765,
     ) -> None:
@@ -160,7 +157,6 @@ class WebServer:
 
     def _run_server(self) -> None:
         """Run the asyncio server."""
-        import websockets
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         self._async_loop = loop
@@ -1086,8 +1082,8 @@ class StandaloneWebServer:
 
     def __init__(
         self,
-        world: "World",
-        config: "VisualizationConfig",
+        world: World,
+        config: VisualizationConfig,
         host: str = "localhost",
         port: int = 8765,
     ) -> None:

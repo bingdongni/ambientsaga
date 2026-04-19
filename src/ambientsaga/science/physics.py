@@ -16,10 +16,7 @@ All physical quantities are tracked and conserved where appropriate.
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass, field
-from typing import Optional
-from enum import Enum
 
 
 @dataclass

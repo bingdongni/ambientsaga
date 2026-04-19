@@ -11,15 +11,16 @@ Generates realistic terrain using:
 
 from __future__ import annotations
 
-import numpy as np
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ambientsaga.config import TerrainConfig, WorldConfig
-from ambientsaga.types import TerrainType, SoilType, MineralType, MineralDeposit, Pos2D
+from ambientsaga.types import MineralDeposit, MineralType, Pos2D, SoilType, TerrainType
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
+    pass
 
 
 # ---------------------------------------------------------------------------

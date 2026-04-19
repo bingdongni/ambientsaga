@@ -7,11 +7,12 @@ Physics → Chemistry → Biology → Ecology → Medicine → Economics → Pol
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable, Optional
-from enum import Enum, auto
+
 import math
-import random
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -93,7 +94,7 @@ class FullDomainCouplingEngine:
     4. 使用真实科学公式进行计算
     """
 
-    def __init__(self, world: "World"):
+    def __init__(self, world: World):
         self.world = world
         self.domain_states: dict[Domain, DomainState] = {}
         self.laws: dict[Domain, list[ScientificLaw]] = {}
@@ -886,7 +887,7 @@ class FullDomainCouplingEngine:
                 still_pending.append(event)
         self.coupling_history = still_pending
 
-    def evaluate_law(self, domain: Domain, law_id: str, context: dict) -> Optional[dict]:
+    def evaluate_law(self, domain: Domain, law_id: str, context: dict) -> dict | None:
         """评估特定定律"""
         if domain not in self.laws:
             return None

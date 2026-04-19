@@ -6,12 +6,12 @@ Butterfly Effect System — Chaos-based historical branching.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
-from enum import Enum, auto
-import uuid
-import math
+
 import random
+import uuid
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -50,7 +50,7 @@ class ButterflyTrace:
     affected_domains: set[str] = field(default_factory=set)
     irreversible: bool = False
     branch_point: bool = False
-    branch_id: Optional[str] = None
+    branch_id: str | None = None
 
     def amplify(self, factor: float) -> None:
         """因果放大"""
@@ -108,7 +108,7 @@ class ButterflyEffectSystem:
     4. 生成替代历史叙事
     """
 
-    def __init__(self, world: "World"):
+    def __init__(self, world: World):
         self.world = world
         self.traces: dict[str, ButterflyTrace] = {}
         self.branch_points: dict[str, HistoricalBranchPoint] = {}
@@ -225,7 +225,7 @@ class ButterflyEffectSystem:
         action: str,
         magnitude: float,
         context: dict
-    ) -> Optional[str]:
+    ) -> str | None:
         """记录一个微事件"""
         # 判定初始强度
         if magnitude < 0.1:
@@ -278,7 +278,7 @@ class ButterflyEffectSystem:
 
         return trace_id
 
-    def _create_branch_point(self, trace: ButterflyTrace, amplifier: Optional[CausalAmplifier]) -> None:
+    def _create_branch_point(self, trace: ButterflyTrace, amplifier: CausalAmplifier | None) -> None:
         """创建历史分叉点"""
         branch_id = str(uuid.uuid4())
 
@@ -305,9 +305,9 @@ class ButterflyEffectSystem:
         narratives = {
             "leader_death": f"领袖 {trace.origin_agent_id[:8]} 的死亡引发了动荡",
             "pandemic": f"瘟疫在 tick {trace.origin_tick} 开始蔓延",
-            "resource_collapse": f"资源枯竭导致社会崩溃",
-            "defection": f"背叛事件撕裂了社区",
-            "innovation": f"一项创新改变了游戏规则",
+            "resource_collapse": "资源枯竭导致社会崩溃",
+            "defection": "背叛事件撕裂了社区",
+            "innovation": "一项创新改变了游戏规则",
         }
 
         # 查找匹配的放大器类型

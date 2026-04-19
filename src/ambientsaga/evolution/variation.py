@@ -23,21 +23,15 @@ The variation operators work on the gene tree structure:
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Callable, Optional
-import copy
 
 from .genome import (
+    BehaviorGenome,
+    ConditionType,
     Gene,
     GeneType,
-    GeneType,
-    ConditionType,
-    PrimitiveGene,
-    ConditionalGene,
-    SequenceGene,
-    CompositeGene,
-    BehaviorGenome,
     GenomeFactory,
 )
 
@@ -107,12 +101,12 @@ class VariationEngine:
 
     def __init__(
         self,
-        mutation_operators: Optional[list[MutationOperator]] = None,
+        mutation_operators: list[MutationOperator] | None = None,
         mutation_rate: float = 0.15,
         crossover_rate: float = 0.7,
         max_genome_size: int = 100,
         min_genome_size: int = 3,
-        rng: Optional[random.Random] = None,
+        rng: random.Random | None = None,
     ):
         """
         Initialize the variation engine.
@@ -143,7 +137,7 @@ class VariationEngine:
     def mutate(
         self,
         genome: BehaviorGenome,
-        fitness_feedback: Optional[Callable[[Gene], float]] = None,
+        fitness_feedback: Callable[[Gene], float] | None = None,
     ) -> BehaviorGenome:
         """
         Apply mutation to a genome.
@@ -371,7 +365,7 @@ class VariationEngine:
                     return True
         return False
 
-    def _find_parent(self, genes: list[Gene], child: Gene) -> Optional[Gene]:
+    def _find_parent(self, genes: list[Gene], child: Gene) -> Gene | None:
         """Find the parent of a gene in the tree."""
         for gene in genes:
             if child in gene.children:
@@ -469,7 +463,7 @@ class VariationEngine:
         self,
         parent1: BehaviorGenome,
         parent2: BehaviorGenome,
-        mutation_rate: Optional[float] = None,
+        mutation_rate: float | None = None,
     ) -> BehaviorGenome:
         """
         Create offspring through sexual reproduction.
@@ -501,7 +495,7 @@ class VariationEngine:
     def asexual_reproduction(
         self,
         parent: BehaviorGenome,
-        mutation_rate: Optional[float] = None,
+        mutation_rate: float | None = None,
     ) -> BehaviorGenome:
         """
         Create offspring through asexual reproduction (cloning + mutation).

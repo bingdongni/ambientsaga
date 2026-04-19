@@ -12,10 +12,11 @@
 
 from __future__ import annotations
 
-import numpy as np
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from math import exp
 from typing import Any
-from math import sqrt, exp, log, sin, cos, pi
+
+import numpy as np
 
 
 @dataclass

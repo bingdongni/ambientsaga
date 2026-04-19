@@ -7,17 +7,16 @@ and validate scaling properties.
 
 from __future__ import annotations
 
-import time
-import json
 import gc
+import json
+import time
 from dataclasses import dataclass
-from typing import Callable
 from pathlib import Path
 
-from ambientsaga.config import Config
-from ambientsaga.world.state import World
 from ambientsaga.agents import AgentFactory
+from ambientsaga.config import Config
 from ambientsaga.natural import TerrainGenerator
+from ambientsaga.world.state import World
 
 
 @dataclass
@@ -92,7 +91,7 @@ class Benchmark:
         factory.spawn_population(n=agents)
 
         # Benchmark loop
-        phase_times: dict[str, float] = {p: 0.0 for p in world._tick_engine.TICK_PHASES}
+        phase_times: dict[str, float] = dict.fromkeys(world._tick_engine.TICK_PHASES, 0.0)
 
         start = time.perf_counter()
         for tick in range(ticks):

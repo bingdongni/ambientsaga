@@ -18,21 +18,16 @@ Engineering value: Scalable concurrent systems, distributed simulation
 
 from __future__ import annotations
 
-from ambientsaga.config import Config
-from ambientsaga.world import World
+import asyncio
+
 from ambientsaga.agents import (
-    Agent,
-    AgentTier,
-    AgentState,
-    AgentProfile,
-    AgentMemory,
-    MemoryEntry,
-    PersonalityTraits,
-    Goal,
-    UnifiedAgentFactory,
     AgentRegistry,
+    AgentTier,
+    UnifiedAgentFactory,
 )
+from ambientsaga.config import Config
 from ambientsaga.simulation import SimulationEngine
+from ambientsaga.world import World
 
 __version__ = "0.1.0"
 
@@ -113,7 +108,7 @@ class AmbientSaga:
 
         await self.initialize()
 
-        print(f"\nStarting AmbientSaga simulation...")
+        print("\nStarting AmbientSaga simulation...")
         print(f"  World: {self.config.world_config.width}x{self.config.world_config.height}")
         print(f"  Agents: {self.config.simulation.total_agents}")
         print(f"  Ticks/sec: {self.config.simulation.ticks_per_second or 'unlimited'}")
@@ -142,10 +137,6 @@ class AmbientSaga:
     def get_summary(self) -> str:
         """Get a human-readable world summary."""
         return self.world.get_summary()
-
-
-# Import asyncio for main entry
-import asyncio
 
 
 def main():

@@ -11,12 +11,13 @@ Models:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+import numpy as np
 
 from ambientsaga.config import EconomyConfig
-from ambientsaga.types import ResourceType, Transaction, EntityID, Pos2D
+from ambientsaga.types import EntityID, Pos2D, ResourceType, Transaction
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -71,7 +72,7 @@ class MarketSystem:
     """
 
     def __init__(
-        self, config: EconomyConfig, world: "World", seed: int = 42
+        self, config: EconomyConfig, world: World, seed: int = 42
     ) -> None:
         self.config = config
         self.world = world

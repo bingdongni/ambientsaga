@@ -14,13 +14,12 @@ No norms are predefined. They crystallize from behavior.
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ambientsaga.protocol.interaction import Trace, Exchange
+    from ambientsaga.protocol.interaction import Trace
 
-import random
 
 
 @dataclass

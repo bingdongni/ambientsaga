@@ -24,9 +24,6 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import Optional
-from collections import defaultdict
-import math
 
 
 @dataclass
@@ -51,7 +48,7 @@ class EmergedBehavior:
     name: str
     gene_hashes: set[str]
     origin_tick: int
-    first_appearance: Optional[int] = None
+    first_appearance: int | None = None
     spread_history: list[int] = field(default_factory=list)  # Adoption over time
     stability: float = 1.0  # How often it survives to next generation
     novelty: float = 1.0  # How novel this is
@@ -110,7 +107,7 @@ class EmergenceDetector:
         stability_threshold: float = 0.5,
         institution_min_agents: int = 5,
         institution_min_stability: float = 0.3,
-        rng: Optional[random.Random] = None,
+        rng: random.Random | None = None,
     ):
         """
         Initialize the emergence detector.
@@ -152,8 +149,8 @@ class EmergenceDetector:
         gene_hash: str,
         gene_type: str,
         tick: int,
-        parent_hashes: Optional[list[str]] = None,
-    ) -> Optional[EmergenceEvent]:
+        parent_hashes: list[str] | None = None,
+    ) -> EmergenceEvent | None:
         """
         Track a genetic innovation (new gene or gene combination).
 
@@ -202,7 +199,7 @@ class EmergenceDetector:
         self,
         gene_hash: str,
         gene_type: str,
-        parent_hashes: Optional[list[str]],
+        parent_hashes: list[str] | None,
     ) -> float:
         """
         Calculate how novel a gene is.
@@ -253,7 +250,7 @@ class EmergenceDetector:
         tick: int,
         execution_context: str,
         outcome: dict,
-    ) -> Optional[EmergedBehavior]:
+    ) -> EmergedBehavior | None:
         """
         Detect when a behavioral pattern emerges.
 
@@ -389,7 +386,7 @@ class EmergenceDetector:
             most_common = Counter(gene_types).most_common(1)[0][0]
             return f"{most_common.lower()}_behavior"
 
-        return f"emergent_pattern"
+        return "emergent_pattern"
 
     # =========================================================================
     # Social Norm Emergence Detection
@@ -401,7 +398,7 @@ class EmergenceDetector:
         adoption_rate: float,
         enforcement_level: float,
         tick: int,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """
         Detect when a social norm emerges.
 
@@ -459,7 +456,7 @@ class EmergenceDetector:
         related_behaviors: list[EmergedBehavior],
         tick: int,
         context: str,
-    ) -> Optional[EmergedInstitution]:
+    ) -> EmergedInstitution | None:
         """
         Detect when a social institution emerges.
 
@@ -601,7 +598,7 @@ class EmergenceDetector:
 
     def get_recent_emergence_events(
         self,
-        event_type: Optional[str] = None,
+        event_type: str | None = None,
         last_n: int = 50,
     ) -> list[dict]:
         """Get recent emergence events."""
@@ -638,7 +635,7 @@ class EmergenceDetector:
             for inst in self.emerged_institutions.values()
         ]
 
-    def detect_social_security_like_emergence(self) -> Optional[dict]:
+    def detect_social_security_like_emergence(self) -> dict | None:
         """
         Specifically detect social security-like emergent institutions.
 

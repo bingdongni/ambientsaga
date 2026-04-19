@@ -10,13 +10,13 @@ Institutional Emergence System — 制度深度涌现。
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
-from enum import Enum, auto
-import uuid
-import math
+
 import random
-from collections import defaultdict, Counter
+import uuid
+from collections import Counter, defaultdict
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -208,7 +208,7 @@ class InstitutionalEmergenceEngine:
     6. 文化：从共享价值观和符号中涌现
     """
 
-    def __init__(self, world: "World"):
+    def __init__(self, world: World):
         self.world = world
 
         # 所有涌现的制度
@@ -235,7 +235,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 习惯法涌现 ====================
 
-    def detect_legal_norm(self, tick: int) -> Optional[EmergentLaw]:
+    def detect_legal_norm(self, tick: int) -> EmergentLaw | None:
         """从行为模式中检测习惯法"""
         if len(self.behavior_history) < 50:
             return None
@@ -302,7 +302,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 政府涌现 ====================
 
-    def detect_government_emergence(self, tick: int) -> Optional[EmergentGovernment]:
+    def detect_government_emergence(self, tick: int) -> EmergentGovernment | None:
         """检测政府涌现"""
         # 查找权威积累最多的agent
         if not self.authority_accumulation:
@@ -361,7 +361,7 @@ class InstitutionalEmergenceEngine:
                 # 增加政府权威
                 gov.authority = min(1.0, gov.authority + 0.01)
 
-    def form_alliance(self, agent1_id: str, agent2_id: str) -> Optional[str]:
+    def form_alliance(self, agent1_id: str, agent2_id: str) -> str | None:
         """形成联盟（可能导致新政府）"""
         # 检查是否应该形成新政府
         alliance_strength = 0
@@ -387,7 +387,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 宗教涌现 ====================
 
-    def detect_religion_emergence(self, tick: int) -> Optional[EmergentReligion]:
+    def detect_religion_emergence(self, tick: int) -> EmergentReligion | None:
         """检测宗教涌现"""
         # 查找共享解释最多的模式
         if len(self.behavior_history) < 100:
@@ -443,7 +443,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 阶级涌现 ====================
 
-    def detect_class_formation(self, tick: int) -> Optional[EmergentClass]:
+    def detect_class_formation(self, tick: int) -> EmergentClass | None:
         """检测阶级形成"""
         if len(self.resource_history) < 20:
             return None
@@ -542,7 +542,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 组织涌现 ====================
 
-    def detect_organization_formation(self, tick: int) -> Optional[EmergentOrganization]:
+    def detect_organization_formation(self, tick: int) -> EmergentOrganization | None:
         """检测组织形成"""
         # 查找频繁协作的agent群体
         if len(self.behavior_history) < 30:
@@ -592,7 +592,7 @@ class InstitutionalEmergenceEngine:
 
     # ==================== 文化涌现 ====================
 
-    def detect_culture_emergence(self, tick: int) -> Optional[EmergentCulture]:
+    def detect_culture_emergence(self, tick: int) -> EmergentCulture | None:
         """检测文化涌现"""
         if len(self.behavior_history) < 50:
             return None

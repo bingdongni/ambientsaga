@@ -22,21 +22,21 @@ Key Concepts:
 
 from __future__ import annotations
 
-from .genome import (
-    Gene,
-    GeneType,
-    PrimitiveGene,
-    ConditionalGene,
-    SequenceGene,
-    CompositeGene,
-    BehaviorGenome,
-    GenomeFactory,
-)
-from .variation import VariationEngine, MutationOperator, MutationType
-from .selection import SelectionEngine, FitnessFunction
 from .culture import CultureEngine
 from .emergence import EmergenceDetector
-from .engine import EvolutionEngine, EvolutionConfig
+from .engine import EvolutionConfig, EvolutionEngine
+from .genome import (
+    BehaviorGenome,
+    CompositeGene,
+    ConditionalGene,
+    Gene,
+    GeneType,
+    GenomeFactory,
+    PrimitiveGene,
+    SequenceGene,
+)
+from .selection import FitnessFunction, SelectionEngine
+from .variation import MutationOperator, MutationType, VariationEngine
 
 __all__ = [
     "Gene",

@@ -4,14 +4,13 @@ Agent core - the foundation of individual agents in the simulation.
 
 from __future__ import annotations
 
-import time
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any
 from enum import Enum
+from typing import Any
 
-from ambientsaga.types import EntityID, Pos2D, Tick, ResourceType
+from ambientsaga.types import EntityID, Pos2D, ResourceType, Tick
 
 
 # Agent Tier - determines processing strategy
@@ -434,28 +433,28 @@ class RuleBasedAgent(Agent):
                 action_type="seek_shelter",
                 success=True,
                 tick=tick,
-                message=f"Seeking safety",
+                message="Seeking safety",
             )
         elif dominant_need == "belonging":
             return ActionResult(
                 action_type="socialize",
                 success=True,
                 tick=tick,
-                message=f"Seeking social connection",
+                message="Seeking social connection",
             )
         elif dominant_need == "esteem":
             return ActionResult(
                 action_type="work",
                 success=True,
                 tick=tick,
-                message=f"Working to build reputation",
+                message="Working to build reputation",
             )
         else:
             return ActionResult(
                 action_type="explore",
                 success=True,
                 tick=tick,
-                message=f"Exploring and growing",
+                message="Exploring and growing",
             )
 
     async def act(self, action: ActionResult, tick: Tick) -> None:
@@ -563,7 +562,7 @@ class AgentRegistry:
         self.max_agents = max_agents
         self._agents: dict[EntityID, Agent] = {}
         self._position_index: dict[Pos2D, EntityID] = {}
-        self._tier_counts: dict[AgentTier, int] = {t: 0 for t in AgentTier}
+        self._tier_counts: dict[AgentTier, int] = dict.fromkeys(AgentTier, 0)
 
     def register(self, agent: Agent) -> bool:
         """Register a new agent."""

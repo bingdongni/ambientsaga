@@ -7,10 +7,8 @@ These scenarios provide interesting starting conditions for the simulation.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 from ambientsaga.scenarios import Scenario
-
 
 # ---------------------------------------------------------------------------
 # Disaster Scenarios

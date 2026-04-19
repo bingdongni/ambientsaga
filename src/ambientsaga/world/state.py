@@ -14,85 +14,76 @@ All state changes go through this class to ensure consistency.
 
 from __future__ import annotations
 
-import json
-import time
-import numpy as np
-import msgspec
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, field
+from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from pathlib import Path
 from threading import RLock
-from typing import TYPE_CHECKING, Any, Callable, Iterator
+from typing import TYPE_CHECKING, Any
 
-from ambientsaga.config import Config, SimulationConfig
-from ambientsaga.types import (
-    EntityID,
-    Pos2D,
-    Event,
-    EventPriority,
-    EventType,
-    new_entity_id,
-    Inventory,
-    Organization,
-    OrganizationType,
-    Signal,
-    SignalType,
-    TerrainType,
-)
-from ambientsaga.world.chunk import ChunkManager
-from ambientsaga.world.tick import TickEngine
-from ambientsaga.world.signal_bus import SignalBus
-from ambientsaga.world.events import EventLog
-from ambientsaga.protocol.interaction import MetaProtocol
-from ambientsaga.protocol.reputation import ReputationNetwork
-from ambientsaga.protocol.language_emergence import LanguageEmergence
-from ambientsaga.protocol.social_norms import EmergentNorms
-from ambientsaga.protocol.emergent_econ import EmergentEconomy
-from ambientsaga.evolution import EvolutionEngine, EvolutionConfig
-from ambientsaga.agents.cognition import CognitiveManager, LLMDeliberator
-from ambientsaga.science import ScienceEngine
+import msgspec
+import numpy as np
+
+from ambientsaga.agents.cognition import CognitiveManager
 from ambientsaga.causal import UnifiedCausalEngine
-from ambientsaga.science.functional_science import FunctionalScienceEngine
-from ambientsaga.emergence.true_emergence import TrueEmergenceLayer
-from ambientsaga.emergence.nexus import CausalDomain, CausalEvent, CausalPropagationEngine, HumanDecisionMaker
-from ambientsaga.history.butterfly import HistoricalButterflySystem
-from ambientsaga.optimization import PerformanceOptimizer
-
-# === NEW: Ultimate Emergence Systems ===
-from ambientsaga.emergence.butterfly_effects import (
-    ButterflyEffectSystem,
-    CausalMagnitude,
-)
-from ambientsaga.emergence.full_domain_coupling import (
-    FullDomainCouplingEngine,
-    Domain,
-)
-from ambientsaga.emergence.institutional_emergence import (
-    InstitutionalEmergenceEngine,
-)
-
-# === Natural Diversity System ===
-from ambientsaga.natural.diversity import NaturalDiversitySystem, BiomeType
+from ambientsaga.config import Config, SimulationConfig
 
 # === Cultural Collision System ===
 from ambientsaga.culture.collision import CulturalCollisionSystem
 
+# === NEW: Ultimate Emergence Systems ===
+from ambientsaga.emergence.butterfly_effects import (
+    ButterflyEffectSystem,
+)
+from ambientsaga.emergence.full_domain_coupling import (
+    Domain,
+    FullDomainCouplingEngine,
+)
+from ambientsaga.emergence.institutional_emergence import (
+    InstitutionalEmergenceEngine,
+)
+from ambientsaga.emergence.nexus import (
+    CausalDomain,
+    CausalPropagationEngine,
+    HumanDecisionMaker,
+)
+from ambientsaga.emergence.true_emergence import TrueEmergenceLayer
+from ambientsaga.evolution import EvolutionConfig, EvolutionEngine
+from ambientsaga.history.butterfly import HistoricalButterflySystem
+
+# === Natural Diversity System ===
+from ambientsaga.natural.diversity import NaturalDiversitySystem
+from ambientsaga.optimization import PerformanceOptimizer
+from ambientsaga.protocol.emergent_econ import EmergentEconomy
+from ambientsaga.protocol.interaction import MetaProtocol
+from ambientsaga.protocol.language_emergence import LanguageEmergence
+from ambientsaga.protocol.reputation import ReputationNetwork
+from ambientsaga.protocol.social_norms import EmergentNorms
+from ambientsaga.science import ScienceEngine
+from ambientsaga.science.functional_science import FunctionalScienceEngine
+
 # === Social Stratification System ===
 from ambientsaga.social.stratification import SocialStratificationSystem
-
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
+from ambientsaga.types import (
+    EntityID,
+    Event,
+    EventPriority,
+    EventType,
+    Organization,
+    OrganizationType,
+    Pos2D,
+    Signal,
+    SignalType,
+    TerrainType,
+    new_entity_id,
+)
+from ambientsaga.world.chunk import ChunkManager
+from ambientsaga.world.events import EventLog
+from ambientsaga.world.signal_bus import SignalBus
+from ambientsaga.world.tick import TickEngine
 
 if TYPE_CHECKING:
-    from ambientsaga.natural.terrain import TerrainGenerator
-    from ambientsaga.natural.climate import ClimateSystem
-    from ambentsaga.natural.water import HydrologySystem
-    from ambientsaga.natural.ecology import Ecosystem
-    from ambientsaga.natural.disaster import DisasterSystem
     from ambientsaga.agents.agent import Agent
-    from ambientsaga.economy.markets import MarketSystem
-    from ambientsaga.social.organizations import OrganizationManager
-    from ambientsaga.politics.governance import GovernanceSystem
 
 
 # ---------------------------------------------------------------------------
@@ -164,7 +155,7 @@ class World:
         self._rng = np.random.Generator(np.random.PCG64(self._config.world.seed))
 
         # Entity registries
-        self._agents: dict[EntityID, "Agent"] = {}
+        self._agents: dict[EntityID, Agent] = {}
         self._agent_positions: dict[EntityID, Pos2D] = {}
         self._organizations: dict[EntityID, Organization] = {}
         self._relationships: dict[tuple[EntityID, EntityID], dict[str, Any]] = {}
@@ -440,7 +431,7 @@ class World:
         """Acquire the world state lock."""
         return self._lock
 
-    def __enter__(self) -> "World":
+    def __enter__(self) -> World:
         self._lock.acquire()
         return self
 
@@ -531,7 +522,7 @@ class World:
     # Agent Management
     # -------------------------------------------------------------------------
 
-    def register_agent(self, agent: "Agent") -> None:
+    def register_agent(self, agent: Agent) -> None:
         """Register an agent in the world."""
         with self._lock:
             if agent.entity_id in self._agents:
@@ -574,13 +565,13 @@ class World:
                 entity_id, old_pos.x, old_pos.y, new_pos.x, new_pos.y
             )
 
-    def get_agent(self, entity_id: EntityID) -> "Agent | None":
+    def get_agent(self, entity_id: EntityID) -> Agent | None:
         """Get an agent by ID."""
         return self._agents.get(entity_id)
 
     def get_agents_near(
         self, pos: Pos2D, radius: float
-    ) -> Iterator[tuple["Agent", float]]:
+    ) -> Iterator[tuple[Agent, float]]:
         """
         Get all agents within radius, with distance.
 
@@ -610,14 +601,14 @@ class World:
                     if agent is not None:
                         yield (agent, (dist_sq) ** 0.5)
 
-    def get_agents_in_radius(self, pos: Pos2D, radius: float) -> list["Agent"]:
+    def get_agents_in_radius(self, pos: Pos2D, radius: float) -> list[Agent]:
         """
         Get all agents within radius (simple interface for protocol deliberation).
         Returns a list of Agent objects, excluding the position's own agent.
         """
         return [agent for agent, _ in self.get_agents_near(pos, radius)]
 
-    def get_all_agents(self) -> list["Agent"]:
+    def get_all_agents(self) -> list[Agent]:
         """Get all agents (snapshot)."""
         with self._lock:
             return list(self._agents.values())
@@ -1033,7 +1024,7 @@ class World:
 
         return handler_method
 
-    def _get_action_energy_cost(self, agent: "Agent", action: Any) -> float:
+    def _get_action_energy_cost(self, agent: Agent, action: Any) -> float:
         """
         Calculate energy cost for an action based on physics.
         Uses physics engine for realistic energy calculations.
@@ -1259,7 +1250,7 @@ class World:
 
         # Pre-fetch all agent positions and objects under single lock
         agent_positions: dict[str, Pos2D] = {}
-        agents_dict: dict[str, "Agent"] = {}
+        agents_dict: dict[str, Agent] = {}
         with self._lock:
             for agent in agents:
                 agent_positions[agent.entity_id] = agent.position
@@ -1267,7 +1258,7 @@ class World:
 
         # Batch query: collect all nearby agents from chunks (no lock needed - read only)
         # This is the main cost: ~560 agents * ~100 candidates = 56K checks
-        all_nearby: dict[str, list[tuple["Agent", float]]] = {}
+        all_nearby: dict[str, list[tuple[Agent, float]]] = {}
 
         for agent in agents:
             pos = agent_positions[agent.entity_id]
@@ -1298,7 +1289,7 @@ class World:
             agent._nearby_agents = nearby_list
             self._do_perception(agent, tick, nearby_list)
 
-    def _do_perception(self, agent: "Agent", tick: int, nearby_list: list) -> None:
+    def _do_perception(self, agent: Agent, tick: int, nearby_list: list) -> None:
         """Process perception for a single agent (no lock required)."""
         agent.last_perception_tick = tick
         perceived = []
@@ -1420,7 +1411,7 @@ class World:
 
     def _make_decision(
         self,
-        agent: "Agent",
+        agent: Agent,
         perceived: list[tuple[str, Any, float, float]] | None,
         tick: int,
     ) -> dict[str, Any] | None:
@@ -1439,7 +1430,7 @@ class World:
 
     def _l1_decision(
         self,
-        agent: "Agent",
+        agent: Agent,
         perceived: list[tuple[str, Any, float, float]] | None,
         nearby_agents: list[tuple],
         tick: int,
@@ -1449,7 +1440,7 @@ class World:
 
     def _llm_deliberate(
         self,
-        agent: "Agent",
+        agent: Agent,
         tick: int,
     ) -> dict[str, Any] | None:
         """
@@ -1460,7 +1451,7 @@ class World:
 
     def _l2_decision(
         self,
-        agent: "Agent",
+        agent: Agent,
         perceived: list[tuple[str, Any, float, float]] | None,
         nearby_agents: list[tuple],
         tick: int,
@@ -1470,7 +1461,7 @@ class World:
 
     def _l3_decision(
         self,
-        agent: "Agent",
+        agent: Agent,
         perceived: list[tuple[str, Any, float, float]] | None,
         nearby_agents: list[tuple],
         tick: int,
@@ -1592,7 +1583,7 @@ class World:
     }
 
     def _record_agent_action(
-        self, agent: "Agent", action: Any, tick: int
+        self, agent: Agent, action: Any, tick: int
     ) -> None:
         """Record an agent action with the evolution engine."""
         if self._evolution is None:
@@ -1641,7 +1632,7 @@ class World:
         )
 
     def _execute_action(
-        self, agent: "Agent", action: Any, tick: int
+        self, agent: Agent, action: Any, tick: int
     ) -> None:
         """Execute a single action for an agent."""
         # Get physics-based energy cost for the action
@@ -1964,7 +1955,7 @@ class World:
             # Unknown action, just rest
             self._execute_action(agent, "rest", tick)
 
-    def _execute_protocol_action(self, agent: "Agent", action: dict, tick: int) -> None:
+    def _execute_protocol_action(self, agent: Agent, action: dict, tick: int) -> None:
         """
         Execute a protocol-based action, creating a Trace.
         This is the bridge between deliberation and trace-based interaction.
@@ -2060,7 +2051,7 @@ class World:
             narrative=f"{agent.name} -> {target.name if target else receiver_id[:8]}: {signal} ({'accepted' if trace.accepted else 'declined'})",
         )
 
-    def _update_agent_needs(self, agent: "Agent", tick: int) -> None:
+    def _update_agent_needs(self, agent: Agent, tick: int) -> None:
         """Update an agent's basic needs each tick."""
         # Hunger and thirst increase over time
         agent.hunger = min(1.0, agent.hunger + 0.002)
@@ -2083,7 +2074,7 @@ class World:
         if tick > 0 and tick % 360 == 0:  # Every year
             agent.attributes.age += 1
 
-    def _check_migration(self, agent: "Agent", tick: int) -> None:
+    def _check_migration(self, agent: Agent, tick: int) -> None:
         """
         Check if agent should migrate to find better resources.
 
@@ -2142,7 +2133,7 @@ class World:
                     narrative=f"{agent.name} migrated ({reason}) from ({old_pos.x:.0f},{old_pos.y:.0f}) to ({new_pos.x:.0f},{new_pos.y:.0f})",
                 )
 
-    def _find_migration_destination(self, agent: "Agent", reason: str) -> Pos2D | None:
+    def _find_migration_destination(self, agent: Agent, reason: str) -> Pos2D | None:
         """
         Find a suitable destination for agent migration.
 
@@ -2200,7 +2191,7 @@ class World:
 
         return best_pos
 
-    def _agent_die(self, agent: "Agent", tick: int, cause: str = "unknown") -> None:
+    def _agent_die(self, agent: Agent, tick: int, cause: str = "unknown") -> None:
         """Handle agent death."""
         # Determine death narrative based on cause
         narratives = {
@@ -2658,7 +2649,6 @@ class World:
         # 5. Performance tracking
         if self._optimizer is not None:
             try:
-                import time
                 self._optimizer.record_tick_time(tick, 0.001)  # Placeholder
             except Exception as e:
                 print(f"[ERROR in _optimizer.record_tick_time] {type(e).__name__}: {e}", file=sys.stderr, flush=True)
@@ -2689,7 +2679,6 @@ class World:
         if self._domain_coupling is None:
             return
 
-        from ambientsaga.emergence.full_domain_coupling import Domain
 
         # Update PHYSICS domain
         if self._temperature is not None:

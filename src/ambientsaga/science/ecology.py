@@ -15,10 +15,7 @@ Human social systems emerge from ecology (resource constraints).
 
 from __future__ import annotations
 
-import math
-import random
 from dataclasses import dataclass, field
-from typing import Optional, Callable
 from enum import Enum
 
 

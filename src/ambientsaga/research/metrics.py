@@ -12,16 +12,18 @@ Metrics:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Any
-from dataclasses import dataclass, field
-from pathlib import Path
 import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
 
 from ambientsaga.config import ResearchConfig
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
+    from ambientsaga.research.academic_output import AcademicReport
 
 
 @dataclass
@@ -82,7 +84,7 @@ class MetricsCollector:
     - Agent (population, health, wealth, happiness)
     """
 
-    def __init__(self, world: "World", config: ResearchConfig) -> None:
+    def __init__(self, world: World, config: ResearchConfig) -> None:
         self.world = world
         self.config = config
 
@@ -343,7 +345,7 @@ class MetricsCollector:
         self,
         title: str = "AmbientSaga Simulation Report",
         authors: list[str] | None = None,
-    ) -> "AcademicReport":
+    ) -> AcademicReport:
         """
         Generate an academic report from collected metrics.
 
@@ -355,7 +357,7 @@ class MetricsCollector:
         - Discussion
         - Conclusions
         """
-        from ambientsaga.research.academic_output import AcademicReport, StatisticalAnalyzer
+        from ambientsaga.research.academic_output import AcademicReport
 
         report = AcademicReport(
             title=title,
@@ -617,7 +619,7 @@ class MetricsCollector:
 
         return "\n\n".join(f"- {c}" for c in conclusions)
 
-    def _add_result_tables(self, report: "AcademicReport") -> None:
+    def _add_result_tables(self, report: AcademicReport) -> None:
         """Add result tables to the report."""
         if not self._snapshots:
             return

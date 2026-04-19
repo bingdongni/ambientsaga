@@ -38,8 +38,8 @@ Example usage:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Literal
 from pathlib import Path
+from typing import Any, Literal
 
 __all__ = [
     "Scenario",
@@ -305,11 +305,11 @@ class ScenarioRegistry:
         """Load built-in scenario types."""
         # Import here to avoid circular imports
         from ambientsaga.scenarios.presets import (
-            VOLCANO_OUTBREAK,
-            GREAT_FLOOD,
-            GOLDEN_AGE,
             COLONIZATION,
+            GOLDEN_AGE,
+            GREAT_FLOOD,
             ICE_AGE,
+            VOLCANO_OUTBREAK,
         )
         self.register(VOLCANO_OUTBREAK)
         self.register(GREAT_FLOOD)
@@ -383,10 +383,11 @@ class WorldGenerator:
 
     def generate(self) -> Any:
         """Generate a world with scenario modifications."""
-        from ambientsaga.world.state import World
-        from ambientsaga.natural.terrain import TerrainGenerator
-        from ambientsaga.natural.climate import ClimateSystem
         import numpy as np
+
+        from ambientsaga.natural.climate import ClimateSystem
+        from ambientsaga.natural.terrain import TerrainGenerator
+        from ambientsaga.world.state import World
 
         # Create base world
         world = World(self.config)
@@ -456,9 +457,10 @@ class WorldGenerator:
 
     def _apply_initial_conditions(self, world: Any) -> None:
         """Apply initial conditions from scenario."""
+        import numpy as np
+
         from ambientsaga.agents import UnifiedAgentFactory as AgentFactory
         from ambientsaga.types import TerrainType
-        import numpy as np
 
         agents_spawned = []
 
@@ -556,8 +558,8 @@ class ScenarioLoader:
     @staticmethod
     def from_url(url: str) -> Scenario:
         """Load scenario from URL."""
-        import urllib.request
         import json
+        import urllib.request
 
         with urllib.request.urlopen(url) as response:
             data = json.load(response)

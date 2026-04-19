@@ -11,12 +11,13 @@ Divides the world into fixed-size chunks for:
 
 from __future__ import annotations
 
-import numpy as np
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 if TYPE_CHECKING:
-    from ambientsaga.types import Pos2D, TerrainType, SignalType
+    from ambientsaga.world.state import World
 
 
 @dataclass
@@ -103,7 +104,7 @@ class ChunkManager:
         world_width: int,
         world_height: int,
         chunk_size: int,
-        world: "World | None" = None,
+        world: World | None = None,
     ) -> None:
         if chunk_size <= 0 or (chunk_size & (chunk_size - 1)) != 0:
             raise ValueError(f"chunk_size must be a positive power of 2, got {chunk_size}")

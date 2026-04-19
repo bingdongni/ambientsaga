@@ -15,12 +15,13 @@
 
 from __future__ import annotations
 
-import numpy as np
-import random
 import hashlib
-from dataclasses import dataclass, field
-from typing import Any
+import random
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Any
+
+import numpy as np
 
 
 @dataclass
@@ -414,13 +415,13 @@ class HistoricalButterflySystem:
 
         descriptions = {
             'disaster': f"A catastrophic {event_type} forced societal reorganization",
-            'economic': f"Economic crisis triggered new paradigm",
-            'political': f"Political upheaval reshaped power structure",
-            'social': f"Social movement fundamentally altered norms",
-            'technological': f"Technology breakthrough changed trajectory",
+            'economic': "Economic crisis triggered new paradigm",
+            'political': "Political upheaval reshaped power structure",
+            'social': "Social movement fundamentally altered norms",
+            'technological': "Technology breakthrough changed trajectory",
         }
 
-        return descriptions.get(event_type, f"Critical event sequence led to historical turning point")
+        return descriptions.get(event_type, "Critical event sequence led to historical turning point")
 
     def _generate_alternative_outcomes(self) -> list[str]:
         """生成替代历史结果"""

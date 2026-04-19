@@ -22,11 +22,10 @@ Engineering value:
 
 from __future__ import annotations
 
-import random
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 from collections import defaultdict
+from dataclasses import dataclass, field
 from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.agents.agent import Agent

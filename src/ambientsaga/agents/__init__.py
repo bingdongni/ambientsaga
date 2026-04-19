@@ -1,25 +1,25 @@
 """Agent system package - individual agents and agent management."""
 
-from ambientsaga.agents.unified_agent import (
-    Agent,
-    AgentTier,
-    AgentState,
-    AgentProfile,
-    AgentMemory,
-    MemoryEntry,
-    PersonalityTraits,
-    Goal,
-    UnifiedAgentFactory,
-)
 from ambientsaga.agents.core import (
+    ActionResult,
     AgentRegistry,
     SocialBond,
-    ActionResult,
 )
 from ambientsaga.agents.human_like import (
-    HumanLikeAgent,
-    EmotionalState,
     CognitiveBias,
+    EmotionalState,
+    HumanLikeAgent,
+)
+from ambientsaga.agents.unified_agent import (
+    Agent,
+    AgentMemory,
+    AgentProfile,
+    AgentState,
+    AgentTier,
+    Goal,
+    MemoryEntry,
+    PersonalityTraits,
+    UnifiedAgentFactory,
 )
 
 __all__ = [

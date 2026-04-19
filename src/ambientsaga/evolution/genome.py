@@ -19,11 +19,11 @@ can have the same identity, just different behaviors.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from enum import Enum, auto
-from typing import Any, Callable, Optional
 import hashlib
 import random
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import Any
 
 
 class GeneType(Enum):
@@ -175,7 +175,7 @@ class PrimitiveGene(Gene):
     def __init__(
         self,
         action: GeneType,
-        parameters: Optional[dict[str, Any]] = None,
+        parameters: dict[str, Any] | None = None,
     ):
         # Validate that this is a primitive type
         if action not in {
@@ -202,8 +202,8 @@ class ConditionalGene(Gene):
     def __init__(
         self,
         condition: ConditionType,
-        then_child: Optional[Gene] = None,
-        else_child: Optional[Gene] = None,
+        then_child: Gene | None = None,
+        else_child: Gene | None = None,
     ):
         super().__init__(
             gene_type=GeneType.CONDITIONAL,
@@ -276,7 +276,7 @@ class ConditionalGene(Gene):
 class SequenceGene(Gene):
     """A sequence gene that executes children in order."""
 
-    def __init__(self, children: Optional[list[Gene]] = None):
+    def __init__(self, children: list[Gene] | None = None):
         super().__init__(gene_type=GeneType.SEQUENCE, children=children or [])
 
 
@@ -289,7 +289,7 @@ class CompositeGene(Gene):
     def __init__(
         self,
         gene_type: GeneType,
-        children: Optional[list[Gene]] = None,
+        children: list[Gene] | None = None,
         execution_mode: str = "sequence",
     ):
         if gene_type not in {GeneType.SEQUENCE, GeneType.PARALLEL, GeneType.RANDOM, GeneType.PRIORITY}:
@@ -319,7 +319,7 @@ class BehaviorGenome:
 
     genes: list[Gene] = field(default_factory=list)
     memory: dict[str, Any] = field(default_factory=dict)  # Evolvable memory
-    cultural_heritage: Optional[str] = None  # Agent ID this was copied from
+    cultural_heritage: str | None = None  # Agent ID this was copied from
     generation: int = 0
     innovation_counter: int = 0
     total_fitness: float = 0.0
@@ -411,7 +411,7 @@ class BehaviorGenome:
         for child in gene.children:
             self._collect_genes(child, result)
 
-    def get_gene_by_hash(self, gene_hash: str) -> Optional[Gene]:
+    def get_gene_by_hash(self, gene_hash: str) -> Gene | None:
         """Find a gene by its hash."""
         for gene in self.get_all_genes():
             if gene.get_hash() == gene_hash:
@@ -460,7 +460,7 @@ class GenomeFactory:
         max_size: int = 20,
         complexity_bias: float = 0.3,
         social_bias: float = 0.2,
-        rng: Optional[random.Random] = None,
+        rng: random.Random | None = None,
     ) -> BehaviorGenome:
         """Create a random genome with specified parameters.
 
@@ -596,7 +596,7 @@ class GenomeFactory:
         return genome
 
     @classmethod
-    def create_social_genome(cls, rng: Optional[random.Random] = None) -> BehaviorGenome:
+    def create_social_genome(cls, rng: random.Random | None = None) -> BehaviorGenome:
         """Create a genome biased towards social behaviors."""
         if rng is None:
             rng = random.Random()

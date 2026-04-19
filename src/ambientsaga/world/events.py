@@ -8,7 +8,7 @@ import random
 from dataclasses import dataclass
 from typing import Any
 
-from ambientsaga.types import Pos2D, Tick
+from ambientsaga.types import Event, Pos2D, Tick
 
 
 @dataclass
@@ -183,7 +183,7 @@ class EventLog:
         self._event_index: dict[int, list[int]] = {}  # tick -> event indices
         self._entity_index: dict[str, list[int]] = {}   # entity_id -> event indices
 
-    def log(self, event: "Event") -> None:
+    def log(self, event: Event) -> None:
         """Log an event."""
         # Get event ID
         event_id = getattr(event, "event_id", None)

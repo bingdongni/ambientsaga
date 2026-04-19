@@ -15,10 +15,8 @@ Social systems emerge from biology (human behavior).
 
 from __future__ import annotations
 
-import math
 import random
 from dataclasses import dataclass, field
-from typing import Optional, Callable
 from enum import Enum
 
 
@@ -86,7 +84,7 @@ class Genome:
     # Traits (derived from genes)
     traits: dict[str, str] = field(default_factory=dict)
 
-    def get_gene(self, locus: str) -> Optional[Gene]:
+    def get_gene(self, locus: str) -> Gene | None:
         """Get a gene by locus."""
         for chrom in self.chromosomes:
             for gene in chrom.genes:
@@ -94,7 +92,7 @@ class Genome:
                     return gene
         return None
 
-    def get_trait(self, trait: str) -> Optional[str]:
+    def get_trait(self, trait: str) -> str | None:
         """Get a trait value."""
         return self.traits.get(trait)
 
@@ -449,7 +447,7 @@ class Organism:
         self.life_stage = LifeStage.DEAD
         self.health = 0.0
 
-    def reproduce(self, partner: Organism = None) -> Optional[Organism]:
+    def reproduce(self, partner: Organism = None) -> Organism | None:
         """Attempt reproduction."""
         if not self.is_alive:
             return None

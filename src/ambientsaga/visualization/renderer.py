@@ -18,17 +18,18 @@ The renderer outputs to:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Any
+import math
 from dataclasses import dataclass
 from enum import Enum, auto
-import math
+from typing import TYPE_CHECKING, Any
 
-from ambientsaga.types import TerrainType, Pos2D
+import numpy as np
+
+from ambientsaga.types import TerrainType
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.config import VisualizationConfig
+    from ambientsaga.world.state import World
 
 
 # ---------------------------------------------------------------------------
@@ -146,8 +147,8 @@ class Renderer:
 
     def __init__(
         self,
-        world: "World",
-        config: "VisualizationConfig",
+        world: World,
+        config: VisualizationConfig,
         seed: int = 42,
     ) -> None:
         self.world = world
@@ -864,8 +865,8 @@ class Renderer:
 
         # Linear interpolation
         self._interpolation_factor = min(1.0, self._interpolation_factor + self._frame_lerp_speed)
-        return ((current.astype(np.float32) * self._interpolation_factor +
-                 previous.astype(np.float32) * (1.0 - self._interpolation_factor))).astype(np.uint8)
+        return (current.astype(np.float32) * self._interpolation_factor +
+                 previous.astype(np.float32) * (1.0 - self._interpolation_factor)).astype(np.uint8)
 
     # ===========================================================================
     # Multi-View Dashboard
@@ -1041,8 +1042,8 @@ class CanvasRenderer(Renderer):
 
     def __init__(
         self,
-        world: "World",
-        config: "VisualizationConfig",
+        world: World,
+        config: VisualizationConfig,
         canvas=None,
         seed: int = 42,
     ) -> None:
@@ -1069,7 +1070,6 @@ class CanvasRenderer(Renderer):
         self._update_canvas(image)
 
         # Schedule next frame
-        import tkinter as tk
 
         if self._canvas:
             delay = int(1000 / max(1, self.config.fps_target))

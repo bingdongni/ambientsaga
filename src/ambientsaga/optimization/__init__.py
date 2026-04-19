@@ -10,12 +10,13 @@ Performance Optimization Module
 
 from __future__ import annotations
 
-import numpy as np
-from typing import Any, Generic, TypeVar, Callable
-from collections import OrderedDict
 import weakref
+from collections import OrderedDict
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any, Generic, TypeVar
 
+import numpy as np
 
 T = TypeVar('T')
 

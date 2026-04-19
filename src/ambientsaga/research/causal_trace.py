@@ -13,8 +13,8 @@ This is critical for academic research value.
 
 from __future__ import annotations
 
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
 
 from ambientsaga.types import Event
 
@@ -24,8 +24,8 @@ class CausalNode:
     """A node in a causal graph."""
 
     event: Event
-    causes: list["CausalNode"]
-    effects: list["CausalNode"]
+    causes: list[CausalNode]
+    effects: list[CausalNode]
     distance: int  # Distance from root event
 
     @property

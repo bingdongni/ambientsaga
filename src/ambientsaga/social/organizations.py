@@ -16,9 +16,10 @@ Institutions:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+import numpy as np
 
 from ambientsaga.types import EntityID, Organization, OrganizationType, Pos2D
 
@@ -55,7 +56,7 @@ class OrganizationManager:
     - Manage institutional rules and legitimacy
     """
 
-    def __init__(self, world: "World", seed: int = 42) -> None:
+    def __init__(self, world: World, seed: int = 42) -> None:
         self.world = world
         self._rng = np.random.Generator(np.random.PCG64(seed))
 

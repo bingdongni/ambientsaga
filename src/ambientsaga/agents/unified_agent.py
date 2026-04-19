@@ -20,25 +20,23 @@ from __future__ import annotations
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Optional, Callable
 from enum import Enum
+from typing import Any
+
 import numpy as np
 
 from ambientsaga.types import (
-    EntityID,
-    Pos2D,
-    Tick,
-    ResourceType,
-    AgentAttributes,
-    Inventory,
     Belief,
     Decision,
     DecisionType,
-    Signal,
+    EntityID,
+    Inventory,
+    Pos2D,
     Relationship,
+    ResourceType,
+    Signal,
+    Tick,
 )
-from ambientsaga.config import AgentConfig, CognitionConfig
-
 
 # =============================================================================
 # Agent Tier
@@ -285,7 +283,7 @@ class CulturalBackground:
             "gender_roles": self.gender_roles,
         }
 
-    def cultural_distance(self, other: "CulturalBackground") -> float:
+    def cultural_distance(self, other: CulturalBackground) -> float:
         """Calculate cultural distance between two agents (0-1)."""
         if self.ethnicity == other.ethnicity and self.ethnicity != "unknown":
             return 0.0
@@ -1134,7 +1132,6 @@ class Agent:
 
     def _action_seek_water(self, tick: int, world: Any) -> Decision:
         """Seek water."""
-        from ambientsaga.types import TerrainType
         for x in range(max(0, self.x - 20), min(world._config.world.width, self.x + 20)):
             for y in range(max(0, self.y - 20), min(world._config.world.height, self.y + 20)):
                 terrain = world.get_terrain(x, y)
@@ -1370,7 +1367,7 @@ class Agent:
 
     def _consume_food(self, world: Any) -> None:
         """Consume food at current location."""
-        from ambientsaga.types import TerrainType, ResourceType
+        from ambientsaga.types import TerrainType
         terrain = world.get_terrain(self.x, self.y)
         if terrain in (TerrainType.GRASSLAND, TerrainType.SAVANNA, TerrainType.TROPICAL_FOREST):
             self.inventory.add(ResourceType.FRUIT, 1.0)

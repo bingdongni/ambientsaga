@@ -9,13 +9,17 @@ Submodules:
 - social_norms: EmergentNorms
 """
 
+from ambientsaga.protocol.emergent_econ import EmergentEconomy, EmergentMarket, TradePattern
 from ambientsaga.protocol.interaction import (
-    MetaProtocol, Trace, Exchange, BASIC_SIGNALS, CONTENT_TYPES,
+    BASIC_SIGNALS,
+    CONTENT_TYPES,
+    Exchange,
+    MetaProtocol,
+    Trace,
 )
-from ambientsaga.protocol.reputation import ReputationNetwork, ReputationObservation, ReputationView
-from ambientsaga.protocol.emergent_econ import EmergentEconomy, TradePattern, EmergentMarket
 from ambientsaga.protocol.language_emergence import LanguageEmergence, SignalUsage
-from ambientsaga.protocol.social_norms import EmergentNorms, Norm, Institution
+from ambientsaga.protocol.reputation import ReputationNetwork, ReputationObservation, ReputationView
+from ambientsaga.protocol.social_norms import EmergentNorms, Institution, Norm
 
 __all__ = [
     "MetaProtocol", "Trace", "Exchange", "BASIC_SIGNALS", "CONTENT_TYPES",

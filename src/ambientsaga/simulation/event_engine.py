@@ -17,14 +17,15 @@ The event engine is designed to be extensible and couples with:
 
 from __future__ import annotations
 
-import random
 import math
+import random
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Optional, Callable, Any
 from enum import Enum
+from typing import Any
 
 from ambientsaga.types import Pos2D, Tick
-from ambientsaga.world.events import Disaster, DisasterSystem, SeasonalEvent, EventLog
+from ambientsaga.world.events import Disaster, DisasterSystem, EventLog
 
 
 class EventType(Enum):
@@ -84,14 +85,14 @@ class Event:
     event_id: str
     event_type: EventType
     tick: Tick
-    position: Optional[Pos2D] = None
+    position: Pos2D | None = None
 
     # Classification
     priority: EventPriority = EventPriority.NORMAL
     source: str = "system"  # system, agent, disaster, social
 
     # Relationships
-    cause_id: Optional[str] = None  # What caused this event
+    cause_id: str | None = None  # What caused this event
     consequence_ids: list[str] = field(default_factory=list)
 
     # Effects
@@ -242,10 +243,10 @@ class EventSimulationEngine:
         self,
         event_type: EventType,
         tick: Tick,
-        position: Optional[Pos2D] = None,
+        position: Pos2D | None = None,
         priority: EventPriority = EventPriority.NORMAL,
         source: str = "system",
-        cause_id: Optional[str] = None,
+        cause_id: str | None = None,
         effects: dict = None,
         duration: int = 1,
         intensity: float = 1.0,
@@ -308,8 +309,8 @@ class EventSimulationEngine:
         self,
         event_type: EventType,
         tick: Tick,
-        position: Optional[Pos2D] = None,
-        cause_id: Optional[str] = None,
+        position: Pos2D | None = None,
+        cause_id: str | None = None,
         effects: dict = None,
         priority: EventPriority = EventPriority.NORMAL,
         intensity: float = 1.0,

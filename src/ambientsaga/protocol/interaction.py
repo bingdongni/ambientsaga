@@ -14,8 +14,13 @@ Core concepts:
 
 from __future__ import annotations
 
+import random
+import uuid
+from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
+
+from ambientsaga.types import Pos2D
 
 if TYPE_CHECKING:
     from ambientsaga.agents.agent import Agent
@@ -46,12 +51,6 @@ CONTENT_TYPES = {
     "agreement",          # {terms}
     "declaration",        # {type, details}
 }
-
-import uuid
-import random
-from collections import defaultdict
-from ambientsaga.types import Pos2D
-
 
 def _gen_trace_id() -> str:
     return uuid.uuid4().hex[:16]
@@ -125,7 +124,7 @@ class MetaProtocol:
     Patterns create expectations. Expectations create norms. Norms create institutions.
     """
 
-    def __init__(self, world, cognitive_manager: Optional["CognitiveManager"] = None) -> None:
+    def __init__(self, world, cognitive_manager: CognitiveManager | None = None) -> None:
         self.world = world
         self._cognitive_manager = cognitive_manager
         self._traces: list[Trace] = []
@@ -438,7 +437,6 @@ class MetaProtocol:
         Convert a cognitive deliberation result to a protocol decision.
         Maps LLM-generated actions to protocol signals and content.
         """
-        import random
         rng = random.Random(tick + hash(agent.entity_id) % 2**31)
 
         action = cognitive_result.get("action", "idle")
@@ -582,7 +580,6 @@ class MetaProtocol:
             - goal: decision goal
             - action: local action string (used when no social interaction)
         """
-        import random
         rng = random.Random(tick + hash(agent.entity_id) % 2**31)
 
         # === Get agent state ===
@@ -657,7 +654,7 @@ class MetaProtocol:
                         "signal": "threat",
                         "receiver_id": target.entity_id,
                         "content": {"type": "declaration", "declaration_type": "threat",
-                                   "details": f"Leave me alone!"},
+                                   "details": "Leave me alone!"},
                         "interpretation": f"stressed out, lashing out at {target.name}",
                         "priority": 0.95,
                         "goal": f"threaten:{target.entity_id[:8]}",
@@ -667,7 +664,7 @@ class MetaProtocol:
                         "signal": "reject",
                         "receiver_id": target.entity_id,
                         "content": {"type": "statement", "claim": "Go away!", "evidence": []},
-                        "interpretation": f"rejecting social contact due to stress",
+                        "interpretation": "rejecting social contact due to stress",
                         "priority": 0.9,
                         "goal": "reject_interaction",
                     }
@@ -733,7 +730,7 @@ class MetaProtocol:
                     "signal": novel_signal,
                     "receiver_id": target.entity_id,
                     "content": {"type": "declaration", "declaration_type": novel_signal,
-                               "details": f"Let's try something new together!"},
+                               "details": "Let's try something new together!"},
                     "interpretation": f"proposing novel interaction: {novel_signal}",
                     "priority": 0.75,
                     "goal": f"innovate:{novel_signal}",
@@ -871,7 +868,7 @@ class MetaProtocol:
                             "signal": "threat",
                             "receiver_id": other.entity_id,
                             "content": {"type": "declaration", "declaration_type": "extortion",
-                                       "details": f"Give me resources or else!"},
+                                       "details": "Give me resources or else!"},
                             "interpretation": f"exploiting distrusted {other.name}",
                             "priority": 0.8,
                             "goal": f"exploit:{other.entity_id[:8]}",
@@ -884,7 +881,7 @@ class MetaProtocol:
                         "signal": "threat",
                         "receiver_id": other.entity_id,
                         "content": {"type": "declaration", "declaration_type": "revenge",
-                                   "details": f"You'll regret crossing me!"},
+                                   "details": "You'll regret crossing me!"},
                         "interpretation": f"seeking revenge on {other.name}",
                         "priority": 0.85,
                         "goal": f"revenge:{other.entity_id[:8]}",
@@ -957,7 +954,7 @@ class MetaProtocol:
                         "signal": "threat",
                         "receiver_id": target.entity_id,
                         "content": {"type": "declaration", "declaration_type": "scarcity_conflict",
-                                   "details": f"Resources are scarce! Give me your share!"},
+                                   "details": "Resources are scarce! Give me your share!"},
                         "interpretation": f"scarcity causing conflict with wealthy {target.name}",
                         "priority": 0.8,
                         "goal": f"scarcity_conflict:{target.entity_id[:8]}",
@@ -972,7 +969,7 @@ class MetaProtocol:
                     "signal": "threat",
                     "receiver_id": target.entity_id,
                     "content": {"type": "declaration", "declaration_type": "competition",
-                               "details": f"Too crowded! Make room!"},
+                               "details": "Too crowded! Make room!"},
                     "interpretation": "density pressure causing competition",
                     "priority": 0.7,
                     "goal": "compete",
@@ -1005,11 +1002,11 @@ class MetaProtocol:
                 other = rng.choice(others)
                 # Gossip content varies by mood
                 if mood > 0.2:
-                    gossip_content = f"Great weather today! Love this community."
+                    gossip_content = "Great weather today! Love this community."
                 elif mood < -0.2:
-                    gossip_content = f"Things could be better around here..."
+                    gossip_content = "Things could be better around here..."
                 else:
-                    gossip_content = f"Seen any interesting lately?"
+                    gossip_content = "Seen any interesting lately?"
                 return {
                     "signal": "inform",
                     "receiver_id": other.entity_id,
@@ -1073,7 +1070,6 @@ class MetaProtocol:
 
     def _get_nearby_agents(self, agent: Agent, radius: float = 200, max_sample: int = 20) -> list:
         """Get nearby agents for deliberation."""
-        import random
         # Try cached nearby agents first
         cached_nearby = getattr(agent, '_nearby_agents', None)
         if cached_nearby is not None:

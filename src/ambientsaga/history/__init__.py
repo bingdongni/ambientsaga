@@ -5,9 +5,9 @@ History Module - 历史蝴蝶效应系统
 """
 
 from ambientsaga.history.butterfly import (
-    HistoricalButterflySystem,
-    ButterflyEvent,
     BifurcationPoint,
+    ButterflyEvent,
+    HistoricalButterflySystem,
     HistoricalPath,
 )
 

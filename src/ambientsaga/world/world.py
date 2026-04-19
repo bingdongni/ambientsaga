@@ -4,14 +4,20 @@ World engine - terrain generation, climate, resources, and natural events.
 
 from __future__ import annotations
 
-import numpy as np
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import Iterator
+
+import numpy as np
 
 from ambientsaga.config import WorldConfig
 from ambientsaga.types import (
-    Pos2D, Tick, EntityID, TerrainType, Biome, ClimateZone,
-    ResourceType, Vector2D, BiomeType, ClimateType
+    Biome,
+    BiomeType,
+    ClimateZone,
+    Pos2D,
+    ResourceType,
+    TerrainType,
+    Tick,
 )
 
 

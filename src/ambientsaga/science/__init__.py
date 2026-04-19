@@ -33,20 +33,20 @@ This is a simplified but principled approximation, not a full simulation.
 
 from __future__ import annotations
 
-from .physics import PhysicsEngine, Vector3D, Force, Energy, Momentum
-from .chemistry import ChemistryEngine, Substance, Reaction, Compound
-from .biology import BiologyEngine, Organism, Genome, Metabolism, ReproductionSystem
-from .ecology import EcosystemEngine, Ecosystem, FoodChain, NutrientCycle, TrophicLevel
-from .systems import ScienceEngine, ScientificLaw, CouplingRelation
+from .biology import BiologyEngine, Genome, Metabolism, Organism, ReproductionSystem
+from .chemistry import ChemistryEngine, Compound, Reaction, Substance
+from .ecology import Ecosystem, EcosystemEngine, FoodChain, NutrientCycle, TrophicLevel
 from .functional_science import (
-    FunctionalScienceEngine,
-    FunctionalPhysics,
-    FunctionalChemistry,
-    FunctionalBiology,
-    FunctionalEcology,
-    PhysicalLaw,
     ChemicalReaction,
+    FunctionalBiology,
+    FunctionalChemistry,
+    FunctionalEcology,
+    FunctionalPhysics,
+    FunctionalScienceEngine,
+    PhysicalLaw,
 )
+from .physics import Energy, Force, Momentum, PhysicsEngine, Vector3D
+from .systems import CouplingRelation, ScienceEngine, ScientificLaw
 
 __all__ = [
     # Physics

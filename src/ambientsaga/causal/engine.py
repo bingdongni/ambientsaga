@@ -5,8 +5,8 @@ Unified Causal Engine - 统一因果引擎
 """
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional, List
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -166,7 +166,7 @@ class UnifiedCausalEngine:
             strength=CausalityStrength.MODERATE,
         ))
 
-    def get_causal_links(self, source_domain: Optional[str] = None, target_domain: Optional[str] = None) -> List[CausalLink]:
+    def get_causal_links(self, source_domain: Optional[str] = None, target_domain: Optional[str] = None) -> list[CausalLink]:
         """获取因果链"""
         links = self._links
         if source_domain:

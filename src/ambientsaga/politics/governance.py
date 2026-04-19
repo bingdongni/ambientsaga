@@ -19,19 +19,18 @@ Key design goals:
 
 from __future__ import annotations
 
-import numpy as np
-from typing import TYPE_CHECKING, Any
 from dataclasses import dataclass, field
 from enum import Enum, auto
-import random
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
 
 from ambientsaga.config import PoliticalConfig
 from ambientsaga.types import EntityID, Pos2D, new_entity_id
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.agents.agent import Agent
-    from ambientsaga.social.organizations import Organization
+    from ambientsaga.world.state import World
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +165,7 @@ class Policy:
 
     def calculate_support(
         self,
-        affected_agents: list["Agent"],
+        affected_agents: list[Agent],
     ) -> tuple[float, float]:
         """
         Calculate support and opposition rates.
@@ -471,7 +470,7 @@ class PoliticalSystem:
     """
 
     def __init__(
-        self, config: PoliticalConfig, world: "World", seed: int = 42
+        self, config: PoliticalConfig, world: World, seed: int = 42
     ) -> None:
         self.config = config
         self.world = world
@@ -784,7 +783,7 @@ class PoliticalSystem:
             return None
 
         # Simple voting: weighted by agent wealth (wealthier = more votes)
-        votes: dict[EntityID, float] = {c: 0.0 for c in candidates}
+        votes: dict[EntityID, float] = dict.fromkeys(candidates, 0.0)
         for candidate_id in candidates:
             agent = self.world.get_agent(candidate_id)
             if agent and agent.is_alive:

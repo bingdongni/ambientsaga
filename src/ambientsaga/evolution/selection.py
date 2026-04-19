@@ -22,12 +22,10 @@ The selection system uses a combination of:
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass, field
-from typing import Callable, Optional, Protocol
-import math
+from dataclasses import dataclass
+from typing import Protocol
 
 from .genome import BehaviorGenome
-
 
 # =============================================================================
 # Fitness Function Protocol
@@ -81,8 +79,8 @@ class SelectionEngine:
         elitism_rate: float = 0.1,
         tournament_size: int = 5,
         diversity_threshold: float = 0.3,
-        fitness_functions: Optional[list[FitnessFunction]] = None,
-        rng: Optional[random.Random] = None,
+        fitness_functions: list[FitnessFunction] | None = None,
+        rng: random.Random | None = None,
     ):
         """
         Initialize the selection engine.
@@ -245,7 +243,7 @@ class SelectionEngine:
     def enforce_diversity(
         self,
         population: list[BehaviorGenome],
-        min_diversity: Optional[float] = None,
+        min_diversity: float | None = None,
     ) -> list[BehaviorGenome]:
         """
         Enforce minimum diversity in the population.

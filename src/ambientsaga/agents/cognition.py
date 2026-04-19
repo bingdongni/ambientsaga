@@ -17,14 +17,13 @@ The cognitive loop:
 
 from __future__ import annotations
 
-import time
-import json
-import asyncio
 import hashlib
-from dataclasses import dataclass, field
-from typing import Any, TYPE_CHECKING
-from enum import Enum
+import json
 import random
+import time
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.agents.agent import Agent
@@ -225,9 +224,9 @@ Be thoughtful, consistent, and true to your character's personality. Your decisi
 
     async def deliberate(
         self,
-        agent: "Agent",
+        agent: Agent,
         context: CognitiveContext,
-        world: "World",
+        world: World,
     ) -> dict[str, Any]:
         """
         Deliberate about what to do.
@@ -281,9 +280,9 @@ Be thoughtful, consistent, and true to your character's personality. Your decisi
 
     def _build_context(
         self,
-        agent: "Agent",
+        agent: Agent,
         context: CognitiveContext,
-        world: "World",
+        world: World,
     ) -> dict[str, Any]:
         """Build a rich context dictionary for deliberation."""
         # Get recent memories
@@ -355,10 +354,9 @@ Be thoughtful, consistent, and true to your character's personality. Your decisi
             "skills": dict(agent.skills),
             "tick": world.tick,
             "year": world.year,
-            "season": world.season,
         }
 
-    def _get_cache_key(self, agent: "Agent", context: CognitiveContext) -> str:
+    def _get_cache_key(self, agent: Agent, context: CognitiveContext) -> str:
         """Generate a cache key for deliberation results."""
         # Include relevant state in cache key
         tick = getattr(agent, '_last_decision_tick', 0)
@@ -373,7 +371,7 @@ Be thoughtful, consistent, and true to your character's personality. Your decisi
         )
         return hashlib.md5(state.encode()).hexdigest()
 
-    def _build_llm_prompt(self, agent: "Agent", context: dict[str, Any]) -> str:
+    def _build_llm_prompt(self, agent: Agent, context: dict[str, Any]) -> str:
         """Build a prompt for the LLM."""
         return f"""You are {context.get('agent_name', 'an agent')} in a simulated world.
 
@@ -462,7 +460,7 @@ What should you do? Respond with JSON:
 
     async def _call_llm(
         self,
-        agent: "Agent",
+        agent: Agent,
         context: dict[str, Any],
     ) -> dict[str, Any]:
         """Call the LLM API for deliberation."""
@@ -555,9 +553,9 @@ The action should feel authentic to the character's personality. Make interestin
 
     def _rule_based_deliberate(
         self,
-        agent: "Agent",
+        agent: Agent,
         context: dict[str, Any],
-        world: "World | None",
+        world: World | None,
     ) -> dict[str, Any]:
         """
         Sophisticated rule-based deliberation fallback.
@@ -700,8 +698,8 @@ class CognitiveManager:
 
     def build_context(
         self,
-        agent: "Agent",
-        world: "World",
+        agent: Agent,
+        world: World,
         tick: int,
     ) -> CognitiveContext:
         """Build a complete cognitive context for an agent."""
@@ -845,9 +843,9 @@ class CognitiveManager:
 
     async def think(
         self,
-        agent: "Agent",
+        agent: Agent,
         context: CognitiveContext,
-        world: "World",
+        world: World,
     ) -> dict[str, Any]:
         """
         Main cognitive process for an agent.
@@ -869,7 +867,7 @@ class CognitiveManager:
 
     def remember(
         self,
-        agent: "Agent",
+        agent: Agent,
         event_type: str,
         content: str,
         tick: int,

@@ -10,9 +10,10 @@ Enhanced Visualization Engine
 
 from __future__ import annotations
 
-import numpy as np
-from typing import Any, Callable
 from dataclasses import dataclass
+from typing import Any
+
+import numpy as np
 
 
 @dataclass

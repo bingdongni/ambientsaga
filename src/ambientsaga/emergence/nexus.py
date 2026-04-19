@@ -17,12 +17,13 @@
 
 from __future__ import annotations
 
-import time
-import math
 import random
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional, Callable
+import time
 from collections import defaultdict
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
 
 if TYPE_CHECKING:
@@ -109,7 +110,7 @@ class CausalEvent:
     # 基本信息
     causal_id: str
     tick: int
-    cause_agent_id: Optional[str]  # 谁引起的（如果是agent）
+    cause_agent_id: str | None  # 谁引起的（如果是agent）
     cause_description: str          # 原因描述
     effect_description: str         # 结果描述
 
@@ -123,13 +124,13 @@ class CausalEvent:
 
     # 级联信息
     is_cascade: bool = False        # 是否是级联事件
-    parent_event_id: Optional[str] = None  # 父事件ID
+    parent_event_id: str | None = None  # 父事件ID
     cascade_depth: int = 0          # 级联深度
     cascade_chain: list[str] = field(default_factory=list)  # 级联链
 
     # 蝴蝶效应追踪
     butterfly_potential: float = 0.0  # 蝴蝶潜力（微小变化→大影响）
-    history_branch_id: Optional[str] = None
+    history_branch_id: str | None = None
 
     # 属性
     is_irreversible: bool = False   # 是否不可逆
@@ -144,7 +145,7 @@ class CausalEvent:
                 self.source_domain, self.magnitude
             )
 
-    def propagate(self) -> list["CausalEvent"]:
+    def propagate(self) -> list[CausalEvent]:
         """生成传播事件"""
         propagated = []
 
@@ -200,7 +201,7 @@ class CausalPropagationEngine:
     这是整个世界的唯一驱动核心。
     """
 
-    def __init__(self, world: "World"):
+    def __init__(self, world: World):
         self.world = world
         self._rng = world._rng if hasattr(world, '_rng') else np.random.default_rng()
 
@@ -465,7 +466,7 @@ class CausalPropagationEngine:
             if len(recent) >= 5:  # 5次重复触发涌现
                 self._trigger_emergence(pattern_key, recent)
 
-    def _create_pattern_signature(self, event: CausalEvent) -> Optional[str]:
+    def _create_pattern_signature(self, event: CausalEvent) -> str | None:
         """创建模式签名"""
         # 基于事件的关键特征创建签名
         if event.cause_agent_id and event.affected_domains:
@@ -476,7 +477,7 @@ class CausalPropagationEngine:
             return f"economic_pattern:{event.source_domain}"
 
         if "权力" in event.effect_description or "服从" in event.effect_description:
-            return f"political_pattern"
+            return "political_pattern"
 
         return None
 
@@ -552,7 +553,7 @@ class CausalPropagationEngine:
         action_description: str,
         effect_description: str,
         magnitude: float = 0.5,
-        domains: Optional[set[str]] = None,
+        domains: set[str] | None = None,
     ) -> list[CausalEvent]:
         """智能体行动触发因果"""
         source_domain = domains.pop() if domains else CausalDomain.SOCIAL

@@ -5,10 +5,10 @@ Causal Engine - 统一因果系统
 """
 
 from ambientsaga.causal.engine import (
-    UnifiedCausalEngine,
+    CausalityStrength,
     CausalLink,
     CausationEvent,
-    CausalityStrength,
+    UnifiedCausalEngine,
 )
 
 __all__ = [

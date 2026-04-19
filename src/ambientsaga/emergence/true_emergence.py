@@ -15,12 +15,10 @@
 
 from __future__ import annotations
 
-import numpy as np
 import random
-from dataclasses import dataclass, field
-from typing import Any
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass

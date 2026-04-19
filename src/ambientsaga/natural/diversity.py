@@ -13,9 +13,10 @@ Manages diverse natural environments including:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
-import numpy as np
 from enum import Enum, auto
+from typing import Any
+
+import numpy as np
 
 
 class BiomeType(Enum):

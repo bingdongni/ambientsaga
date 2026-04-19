@@ -17,15 +17,15 @@ This module enables scalable LLM integration for thousands of agents.
 from __future__ import annotations
 
 import asyncio
-import time
 import hashlib
 import json
-from dataclasses import dataclass, field
-from typing import Any, Callable, Awaitable, Optional
-from enum import Enum
-from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor
 import threading
+import time
+from collections.abc import Awaitable, Callable
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
 
 
 class Priority(Enum):
@@ -79,7 +79,7 @@ class LLMCache:
         self._hits = 0
         self._misses = 0
 
-    def get(self, key: str) -> Optional[LLMResult]:
+    def get(self, key: str) -> LLMResult | None:
         """Get cached result if available and not expired."""
         with self._lock:
             if key in self._cache:
@@ -282,7 +282,7 @@ class AsyncLLMQueue:
         self,
         task: LLMTask,
         wait: bool = True,
-    ) -> Optional[LLMResult]:
+    ) -> LLMResult | None:
         """
         Submit a task to the queue.
 
@@ -318,7 +318,7 @@ class AsyncLLMQueue:
             try:
                 result = await asyncio.wait_for(future, timeout=task.timeout + 10.0)
                 return result
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 return LLMResult(
                     task_id=task.task_id,
                     success=False,
@@ -352,11 +352,11 @@ class AsyncLLMQueue:
                             except Exception:
                                 pass
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
             except asyncio.CancelledError:
                 break
-            except Exception as e:
+            except Exception:
                 # Log error but continue
                 pass
 
@@ -407,7 +407,7 @@ class AsyncLLMQueue:
 
                 return llm_result
 
-            except Exception as e:
+            except Exception:
                 self._stats["retried"] += 1
 
                 # Exponential backoff
@@ -472,8 +472,8 @@ Respond with your decision and reasoning. Format your response as JSON:
 
     def _call_requests(self, prompt: str) -> dict[str, Any]:
         """Make sync HTTP call to LLM API."""
-        import urllib.request
         import urllib.error
+        import urllib.request
 
         if not self.api_key:
             raise RuntimeError("No API key available")
@@ -558,7 +558,7 @@ class LLMBatchProcessor:
         self._batch_size = batch_size
         self._pending_batch: list[LLMTask] = []
 
-    async def add(self, task: LLMTask) -> Optional[LLMResult]:
+    async def add(self, task: LLMTask) -> LLMResult | None:
         """Add task to batch and process if full."""
         self._pending_batch.append(task)
 
@@ -567,7 +567,7 @@ class LLMBatchProcessor:
 
         return None
 
-    async def flush(self) -> Optional[LLMResult]:
+    async def flush(self) -> LLMResult | None:
         """Process current batch."""
         if not self._pending_batch:
             return None

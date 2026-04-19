@@ -22,7 +22,7 @@ Coupling Graph:
     Biology
      /    \
 Ecology   Social Sciences
-    \       /
+    \\       /
    Human Systems
       |
    Economic Systems
@@ -35,9 +35,8 @@ Ecology   Social Sciences
 from __future__ import annotations
 
 import math
-import random
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Optional, Callable, Any
 from enum import Enum
 
 
@@ -188,10 +187,10 @@ class ScienceEngine:
         self.config = config
 
         # Sub-engines
-        from .physics import PhysicsEngine
-        from .chemistry import ChemistryEngine
         from .biology import BiologyEngine
+        from .chemistry import ChemistryEngine
         from .ecology import EcosystemEngine as EcologyEngine
+        from .physics import PhysicsEngine
 
         self.physics = PhysicsEngine(self.config.get("physics") if isinstance(self.config, dict) else None)
         self.chemistry = ChemistryEngine(self.config.get("chemistry") if isinstance(self.config, dict) else None)

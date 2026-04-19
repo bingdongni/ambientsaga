@@ -11,37 +11,37 @@ Emergence Package — 终极涌现引擎。
 from ambientsaga.emergence.butterfly_effects import (
     ButterflyEffectSystem,
     ButterflyTrace,
-    HistoricalBranchPoint,
     CausalAmplifier,
     CausalMagnitude,
+    HistoricalBranchPoint,
     SensitivityLevel,
 )
 from ambientsaga.emergence.full_domain_coupling import (
-    FullDomainCouplingEngine,
+    CouplingRule,
     Domain,
     DomainState,
+    FullDomainCouplingEngine,
     ScientificLaw,
-    CouplingRule,
 )
 from ambientsaga.emergence.humanity_layer import (
     AgentHumanityLayer,
-    EmotionType,
-    EmotionState,
     CognitiveBiases,
     CulturalPrejudice,
-    TrustNetwork,
-    TemporalPreference,
+    EmotionState,
+    EmotionType,
     IrrationalityEngine,
+    TemporalPreference,
+    TrustNetwork,
 )
 from ambientsaga.emergence.institutional_emergence import (
+    EmergentClass,
+    EmergentCulture,
+    EmergentGovernment,
+    EmergentLaw,
+    EmergentOrganization,
+    EmergentReligion,
     InstitutionalEmergenceEngine,
     InstitutionType,
-    EmergentLaw,
-    EmergentGovernment,
-    EmergentReligion,
-    EmergentClass,
-    EmergentOrganization,
-    EmergentCulture,
 )
 
 __all__ = [

@@ -12,8 +12,8 @@ Manages the simulation clock with support for:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
-from typing import Callable, Iterator
+from collections.abc import Callable
+from dataclasses import dataclass
 
 
 @dataclass

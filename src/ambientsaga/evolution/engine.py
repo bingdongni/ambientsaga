@@ -24,13 +24,13 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import Optional, Callable, Protocol
+from typing import Protocol
 
-from .genome import BehaviorGenome, Gene, GenomeFactory
-from .variation import VariationEngine, MutationType
-from .selection import SelectionEngine, survival_fitness, reproduction_fitness, social_fitness
-from .culture import CultureEngine, CulturalEvent
-from .emergence import EmergenceDetector, EmergenceEvent, EmergedInstitution
+from .culture import CultureEngine
+from .emergence import EmergenceDetector
+from .genome import BehaviorGenome, GenomeFactory
+from .selection import SelectionEngine, reproduction_fitness, social_fitness, survival_fitness
+from .variation import VariationEngine
 
 
 class AgentContextProvider(Protocol):
@@ -105,9 +105,9 @@ class EvolutionEngine:
 
     def __init__(
         self,
-        config: Optional[EvolutionConfig] = None,
-        rng: Optional[random.Random] = None,
-        context_provider: Optional[AgentContextProvider] = None,
+        config: EvolutionConfig | None = None,
+        rng: random.Random | None = None,
+        context_provider: AgentContextProvider | None = None,
     ):
         """
         Initialize the evolution engine.
@@ -178,8 +178,8 @@ class EvolutionEngine:
         self,
         agent_id: str,
         initial_type: str = "random",
-        parent1: Optional[BehaviorGenome] = None,
-        parent2: Optional[BehaviorGenome] = None,
+        parent1: BehaviorGenome | None = None,
+        parent2: BehaviorGenome | None = None,
     ) -> BehaviorGenome:
         """
         Create a new genome for an agent.
@@ -226,7 +226,7 @@ class EvolutionEngine:
 
         return genome
 
-    def get_genome(self, agent_id: str) -> Optional[BehaviorGenome]:
+    def get_genome(self, agent_id: str) -> BehaviorGenome | None:
         """Get an agent's genome."""
         return self.genomes.get(agent_id)
 
@@ -362,7 +362,7 @@ class EvolutionEngine:
         self,
         agent_id: str,
         current_population: int,
-    ) -> tuple[bool, Optional[str]]:
+    ) -> tuple[bool, str | None]:
         """
         Determine if an agent should reproduce.
 
@@ -406,7 +406,7 @@ class EvolutionEngine:
     def create_offspring(
         self,
         parent1_id: str,
-        parent2_id: Optional[str] = None,
+        parent2_id: str | None = None,
     ) -> tuple[str, BehaviorGenome]:
         """
         Create an offspring genome.
@@ -692,7 +692,7 @@ class EvolutionEngine:
             "emergence_summary": self.emergence_detector.get_emergence_summary(),
         }
 
-    def get_genome_info(self, agent_id: str) -> Optional[dict]:
+    def get_genome_info(self, agent_id: str) -> dict | None:
         """Get information about an agent's genome."""
         genome = self.get_genome(agent_id)
         if not genome:

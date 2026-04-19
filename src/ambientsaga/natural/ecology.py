@@ -12,9 +12,10 @@ Models:
 
 from __future__ import annotations
 
-import numpy as np
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+
+import numpy as np
 
 from ambientsaga.config import EcologyConfig
 from ambientsaga.types import TerrainType
@@ -525,7 +526,9 @@ class Ecosystem:
 
     def get_biodiversity(self, x: int, y: int) -> float:
         """Get biodiversity index (Simpson's Diversity Index) at a position."""
-        H, W = terrain.shape
+        if not hasattr(self, '_terrain'):
+            return 0.0
+        H, W = self._terrain.shape
         populations: list[float] = []
 
         for species_id, pop in self._population.items():

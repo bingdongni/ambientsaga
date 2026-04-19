@@ -14,15 +14,13 @@ from __future__ import annotations
 import heapq
 import threading
 from collections import defaultdict
-from dataclasses import dataclass, field
-from typing import Callable, Iterator
-import numpy as np
+from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 
-from ambientsaga.types import Signal, SignalType, Pos2D, EntityID
-
+from ambientsaga.types import EntityID, Pos2D, Signal, SignalType
 
 # Type alias for signal callbacks
-SignalCallback: Callable[[Signal], None]
+SignalCallback: Callable[[Signal], None]  # noqa: F821
 
 
 @dataclass
@@ -33,7 +31,7 @@ class SignalSubscription:
     signal_types: SignalType  # Bitmask of subscribed signal types
     position: Pos2D  # Agent's current position
     perception_radius: float  # Maximum signal detection range
-    callback: SignalCallback
+    callback: SignalCallback  # noqa: F821
     priority: int = 0  # Higher = processed first
     active: bool = True
 
@@ -113,7 +111,7 @@ class SignalBus:
         signal_types: SignalType,
         position: Pos2D,
         perception_radius: float,
-        callback: SignalCallback,
+        callback: SignalCallback,  # noqa: F821
         priority: int = 0,
     ) -> SignalSubscription:
         """

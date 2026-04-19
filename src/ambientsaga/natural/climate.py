@@ -11,11 +11,12 @@ Models:
 
 from __future__ import annotations
 
-import numpy as np
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ambientsaga.config import ClimateConfig
-from ambientsaga.types import Season, ClimateZone
+from ambientsaga.types import ClimateZone, Season
 
 if TYPE_CHECKING:
     pass
@@ -205,7 +206,7 @@ class ClimateSystem:
 
                 # Seasonal variation (±15°C)
                 season_mod = season.temperature_modifier(hemisphere) - 1.0
-                seasonal_temp = base + seasonal_mod * 15.0
+                seasonal_temp = base + season_mod * 15.0
 
                 # Diurnal variation (±5°C, simplified)
                 tick_in_day = tick % 24

@@ -20,14 +20,11 @@ Features:
 from __future__ import annotations
 
 import json
-import time
 import math
-from dataclasses import dataclass, field
-from typing import Any, Optional
-from pathlib import Path
-from collections import defaultdict
+from dataclasses import dataclass
 from datetime import datetime
-import numpy as np
+from pathlib import Path
+from typing import Any
 
 if __name__ == "__main__":
     # Allow running as standalone script
@@ -103,7 +100,7 @@ class AcademicReport:
         title: str,
         content: str,
         level: int = 2,
-    ) -> "AcademicReport":
+    ) -> AcademicReport:
         """Add a section to the report."""
         self.sections.append({
             "title": title,
@@ -118,7 +115,7 @@ class AcademicReport:
         image_data: str | None = None,  # Base64 encoded image
         chart_type: str = "line",
         data: dict[str, Any] | None = None,
-    ) -> "AcademicReport":
+    ) -> AcademicReport:
         """Add a figure to the report."""
         self.figures.append({
             "caption": caption,
@@ -135,7 +132,7 @@ class AcademicReport:
         headers: list[str],
         rows: list[list[Any]],
         notes: str | None = None,
-    ) -> "AcademicReport":
+    ) -> AcademicReport:
         """Add a table to the report."""
         self.tables.append({
             "caption": caption,
@@ -146,7 +143,7 @@ class AcademicReport:
         })
         return self
 
-    def add_reference(self, citation: str) -> "AcademicReport":
+    def add_reference(self, citation: str) -> AcademicReport:
         """Add a reference."""
         self.references.append(citation)
         return self
@@ -240,7 +237,7 @@ class AcademicReport:
 
         # Figures
         for fig in self.figures:
-            lines.append(f"\\begin{{figure}}[htbp]")
+            lines.append("\\begin{figure}[htbp]")
             lines.append("\\centering")
             if fig["image_data"]:
                 lines.append(f"\\includegraphics[width=0.8\\textwidth]{{{fig['image_data']}}}")
@@ -253,7 +250,7 @@ class AcademicReport:
 
         # Tables
         for table in self.tables:
-            lines.append(f"\\begin{{table}}[htbp]")
+            lines.append("\\begin{table}[htbp]")
             lines.append("\\centering")
             lines.append(f"\\caption{{{table['caption']}}}")
             lines.append("\\begin{{tabular}}{{{' + 'c' * len(table['headers']) + '}}}")
@@ -308,7 +305,7 @@ class AcademicReport:
         if self.figures:
             html.append('<h2>Figures</h2>')
             for fig in self.figures:
-                html.append(f'<div class="figure">')
+                html.append('<div class="figure">')
                 html.append(f'<p><strong>Figure {fig["figure_id"]}:</strong> {fig["caption"]}</p>')
                 if fig["data"]:
                     html.append(f'<pre>{json.dumps(fig["data"], indent=2)}</pre>')
@@ -317,7 +314,7 @@ class AcademicReport:
         if self.tables:
             html.append('<h2>Tables</h2>')
             for table in self.tables:
-                html.append(f'<table>')
+                html.append('<table>')
                 html.append('<thead><tr>')
                 for h in table["headers"]:
                     html.append(f'<th>{h}</th>')
@@ -457,7 +454,6 @@ class StatisticalAnalyzer:
     @staticmethod
     def _t_cdf(t: float, df: int) -> float:
         """Approximate t-distribution CDF."""
-        import math
         x = df / (df + t * t)
         return 1 - 0.5 * (x ** (df / 2))
 

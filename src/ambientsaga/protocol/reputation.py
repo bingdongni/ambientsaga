@@ -8,13 +8,13 @@ through the social network like a diffusion process.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from collections import defaultdict
 import random
+from collections import defaultdict
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ambientsaga.agents.agent import Agent
+    pass
 
 
 @dataclass

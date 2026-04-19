@@ -11,12 +11,11 @@ Agent Humanity Layer — 人性认知架构。
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
-from enum import Enum, auto
-import math
+
 import random
-from collections import defaultdict
+from dataclasses import dataclass, field
+from enum import Enum, auto
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.agents.agent import Agent
@@ -343,7 +342,7 @@ class AgentHumanityLayer:
     6. IrrationalityEngine - 高压/疲劳/群体极化下的非理性
     """
 
-    def __init__(self, agent: "Agent"):
+    def __init__(self, agent: Agent):
         self.agent = agent
 
         # 核心人性组件

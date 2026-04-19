@@ -5,16 +5,17 @@ Core simulation engine - Tick-driven simulation with event bus and batch schedul
 from __future__ import annotations
 
 import asyncio
-import time
-from dataclasses import dataclass, field
-from typing import Callable, Any
-from collections import deque
 import heapq
+import time
+from collections import deque
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Any
 
-from ambientsaga.config import SimulationConfig
-from ambientsaga.types import Tick, EntityID
-from ambientsaga.world import World
 from ambientsaga.agents import AgentRegistry
+from ambientsaga.config import SimulationConfig
+from ambientsaga.types import EntityID, Tick
+from ambientsaga.world import World
 
 
 @dataclass
@@ -66,7 +67,7 @@ class EventBus:
                         result = callback(event)
                         if asyncio.iscoroutine(result):
                             await result
-                    except Exception as e:
+                    except Exception:
                         pass  # Log errors in production
 
     async def get_events(self, event_type: str | None = None, since_tick: Tick = 0) -> list[SimulationEvent]:
@@ -214,7 +215,7 @@ class SimulationEngine:
                 result = handler(tick)
                 if asyncio.iscoroutine(result):
                     await result
-            except Exception as e:
+            except Exception:
                 pass  # Log in production
 
         # Update world
@@ -248,7 +249,7 @@ class SimulationEngine:
                     priority = result.get("priority", 10)
                     self.scheduler.reschedule(agent_id, priority)
 
-            except Exception as e:
+            except Exception:
                 pass  # Log in production
 
     def _update_stats(self, tick_duration: float) -> None:

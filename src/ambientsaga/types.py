@@ -17,15 +17,27 @@ Types are organized into:
 from __future__ import annotations
 
 import uuid
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Callable, Dict, FrozenSet, Iterator, List, Optional, Sequence, Set, Tuple, Union
+from typing import (
+    Any,
+    Union,
+)
 
-from typing_extensions import TypeAlias
+# TypeAlias was added in Python 3.10
+# For Python 3.9, we need to use typing_extensions or just use plain strings
+try:
+    from typing import TypeAlias  # Python 3.10+
+except ImportError:
+    try:
+        from typing import TypeAlias  # Python 3.9 with typing_extensions
+    except ImportError:
+        # Fallback for Python 3.9 without typing_extensions
+        TypeAlias = str  # type: ignore
 
 import numpy as np
 import numpy.typing as npt
-
 
 # ---------------------------------------------------------------------------
 # Numeric Types
@@ -83,7 +95,7 @@ class Pos2D:
         """Check if other position is within Euclidean radius of this position."""
         return self.euclidean_distance(other) <= radius
 
-    def within_chunk(self, chunk_size: int) -> Tuple[int, int]:
+    def within_chunk(self, chunk_size: int) -> tuple[int, int]:
         """Get the chunk coordinates this position belongs to."""
         return (self.x // chunk_size, self.y // chunk_size)
 
@@ -110,7 +122,7 @@ class Pos2D:
     def __sub__(self, other: Pos2D) -> Pos2D:
         return Pos2D(self.x - other.x, self.y - other.y)
 
-    def __mul__(self, scalar: Union[int, float]) -> Pos2D:
+    def __mul__(self, scalar: int | float) -> Pos2D:
         return Pos2D(int(self.x * scalar), int(self.y * scalar))
 
     def __iter__(self) -> Iterator[int]:
@@ -511,9 +523,9 @@ class Tile:
     climate: ClimateType
     fertility: float  # 0.0-1.0
     water_access: float  # 0.0-1.0
-    resources: FrozenSet[ResourceType]
-    owner_id: Optional[EntityID] = None
-    settlement_id: Optional[EntityID] = None
+    resources: frozenset[ResourceType]
+    owner_id: EntityID | None = None
+    settlement_id: EntityID | None = None
     population: int = 0
     development_level: float = 0.0  # 0.0-1.0
 
@@ -586,7 +598,7 @@ class WorldMap:
         if self.climate_grid.shape != (self.height, self.width):
             raise ValueError("Climate grid dimensions must match world dimensions")
 
-    def get_tile(self, pos: Pos2D) -> Optional[Tile]:
+    def get_tile(self, pos: Pos2D) -> Tile | None:
         if not self.is_valid_position(pos):
             return None
         return self.tiles[pos.y, pos.x]
@@ -594,7 +606,7 @@ class WorldMap:
     def is_valid_position(self, pos: Pos2D) -> bool:
         return 0 <= pos.x < self.width and 0 <= pos.y < self.height
 
-    def get_tiles_in_rect(self, bbox: BoundingBox) -> List[Tile]:
+    def get_tiles_in_rect(self, bbox: BoundingBox) -> list[Tile]:
         """Get all tiles within a bounding box."""
         tiles = []
         for y in range(max(0, bbox.min_y), min(self.height, bbox.max_y + 1)):
@@ -604,7 +616,7 @@ class WorldMap:
                     tiles.append(tile)
         return tiles
 
-    def get_tiles_in_radius(self, center: Pos2D, radius: float) -> List[Tile]:
+    def get_tiles_in_radius(self, center: Pos2D, radius: float) -> list[Tile]:
         """Get all tiles within Euclidean radius of a center point."""
         tiles = []
         r = int(radius) + 1
@@ -617,7 +629,7 @@ class WorldMap:
                         tiles.append(tile)
         return tiles
 
-    def get_terrain_at(self, pos: Pos2D) -> Optional[TerrainType]:
+    def get_terrain_at(self, pos: Pos2D) -> TerrainType | None:
         if not self.is_valid_position(pos):
             return None
         return TerrainType(self.terrain_grid[pos.y, pos.x])
@@ -701,17 +713,17 @@ class AgentAttributes:
     name: str
     age: int
     gender: str
-    attributes: FrozenSet[Tuple[Attribute, float]]  # attribute -> value 0.0-1.0
+    attributes: frozenset[tuple[Attribute, float]]  # attribute -> value 0.0-1.0
     culture_id: str
     native_language: str
     appearance: str  # Brief description
     personality_summary: str  # Brief personality summary
     backstory: str  # Backstory/memories
-    talents: FrozenSet[str]
-    flaws: FrozenSet[str]
+    talents: frozenset[str]
+    flaws: frozenset[str]
     ambition: str
     fear: str
-    secret: Optional[str] = None
+    secret: str | None = None
 
     def get_attribute(self, attr: Attribute) -> float:
         for a, v in self.attributes:
@@ -770,10 +782,10 @@ class Signal:
     signal_type: SignalType
     position: Pos2D
     tick: int
-    source_id: Optional[EntityID]
+    source_id: EntityID | None
     intensity: float  # 0.0-1.0
     content: str  # Human-readable description
-    metadata: FrozenSet[Tuple[str, Any]]  # Additional data
+    metadata: frozenset[tuple[str, Any]]  # Additional data
 
 
 class EventType(Enum):
@@ -862,13 +874,13 @@ class Event:
 
     event_type: EventType
     tick: int
-    position: Optional[Pos2D]
-    subject_id: Optional[EntityID]
-    object_id: Optional[EntityID]
-    cause_id: Optional[str]  # Causal chain ID
+    position: Pos2D | None
+    subject_id: EntityID | None
+    object_id: EntityID | None
+    cause_id: str | None  # Causal chain ID
     description: str
     priority: EventPriority
-    metadata: FrozenSet[Tuple[str, Any]]
+    metadata: frozenset[tuple[str, Any]]
     impact_radius: float = 0.0  # 0 = local only
 
     def __post_init__(self) -> None:
@@ -881,7 +893,7 @@ class CausalChain:
     """A causal chain linking related events."""
 
     chain_id: str
-    events: Tuple[Event, ...]  # Ordered by tick
+    events: tuple[Event, ...]  # Ordered by tick
     summary: str  # AI-generated summary of the chain
 
 
@@ -936,17 +948,17 @@ class Organization:
     org_type: OrganizationType
     founding_tick: int
     founding_position: Pos2D
-    leader_id: Optional[EntityID] = None
-    parent_org_id: Optional[EntityID] = None  # For nested orgs (e.g., guilds in kingdom)
-    territory: Optional[BoundingBox] = None
-    founding_members: FrozenSet[EntityID] = field(default_factory=frozenset)
+    leader_id: EntityID | None = None
+    parent_org_id: EntityID | None = None  # For nested orgs (e.g., guilds in kingdom)
+    territory: BoundingBox | None = None
+    founding_members: frozenset[EntityID] = field(default_factory=frozenset)
     ideology: str = ""  # Brief description of beliefs/goals
     treasury: float = 0.0
     population: int = 0
     reputation: float = 0.5  # 0.0-1.0
     stability: float = 0.5  # 0.0-1.0
-    culture_ids: FrozenSet[str] = field(default_factory=frozenset)
-    language_ids: FrozenSet[str] = field(default_factory=frozenset)
+    culture_ids: frozenset[str] = field(default_factory=frozenset)
+    language_ids: frozenset[str] = field(default_factory=frozenset)
 
     def is_member(self, agent_id: EntityID) -> bool:
         return agent_id in self.founding_members
@@ -1017,11 +1029,11 @@ class Decision:
     """An agent's decision."""
 
     decision_id: EntityID
-    agent_id: Optional[EntityID]
+    agent_id: EntityID | None
     tick: int
     decision_type: DecisionType
-    target_id: Optional[EntityID]
-    target_pos: Optional[Pos2D]
+    target_id: EntityID | None
+    target_pos: Pos2D | None
     reasoning: str  # Why this decision was made
     action: str  # What action was taken
     outcome: str  # What happened as a result
@@ -1043,8 +1055,8 @@ class Belief:
     strength: float  # 0.0-1.0
     source: str  # How this belief was formed
     tick_formed: int
-    supporting_memories: Tuple[str, ...]
-    contradicting_memories: Tuple[str, ...]
+    supporting_memories: tuple[str, ...]
+    contradicting_memories: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -1055,7 +1067,7 @@ class CulturalValue:
     name: str
     description: str
     importance: float  # 0.0-1.0
-    exceptions: Tuple[str, ...]  # When this value can be violated
+    exceptions: tuple[str, ...]  # When this value can be violated
 
 
 @dataclass(frozen=True)
@@ -1068,7 +1080,7 @@ class Ritual:
     frequency: str  # e.g., "annual", "weekly", "lunar"
     participants_min: int
     participants_max: int
-    requirements: FrozenSet[str]  # e.g., "fire", "music", "food"
+    requirements: frozenset[str]  # e.g., "fire", "music", "food"
     meaning: str  # What the ritual represents
 
 
@@ -1097,11 +1109,11 @@ class Language:
     name: str
     family: str  # Language family
     vocabulary_size: int
-    speakers: Set[EntityID]
-    dialect_of: Optional[str]  # Parent language if dialect
-    key_features: Tuple[str, ...]
-    common_words: Dict[str, str]  # word -> meaning
-    grammar_rules: Tuple[str, ...]
+    speakers: set[EntityID]
+    dialect_of: str | None  # Parent language if dialect
+    key_features: tuple[str, ...]
+    common_words: dict[str, str]  # word -> meaning
+    grammar_rules: tuple[str, ...]
     script_type: str  # e.g., "none", "alphabetic", "logographic"
 
 
@@ -1111,14 +1123,14 @@ class Meme:
 
     meme_id: EntityID
     content: str
-    origin_agent_id: Optional[EntityID]
+    origin_agent_id: EntityID | None
     origin_tick: int
     origin_position: Pos2D
     spread_count: int = 0
     mutation_rate: float = 0.1  # How often the meme mutates
-    variants: FrozenSet[str] = field(default_factory=frozenset)  # Mutations
+    variants: frozenset[str] = field(default_factory=frozenset)  # Mutations
 
-    def mutate(self) -> "Meme":
+    def mutate(self) -> Meme:
         """Create a mutated version of this meme."""
         import random
         words = self.content.split()
@@ -1170,11 +1182,11 @@ class Technology:
     name: str
     description: str
     category: TechCategory
-    prerequisites: FrozenSet[EntityID]  # Other techs needed first
+    prerequisites: frozenset[EntityID]  # Other techs needed first
     discovery_chance: float  # Base chance per tick
-    unlocked_by: FrozenSet[EntityID]  # Who discovered it
+    unlocked_by: frozenset[EntityID]  # Who discovered it
     tick_discovered: int
-    applications: Tuple[str, ...]  # How this tech can be used
+    applications: tuple[str, ...]  # How this tech can be used
 
 
 # ---------------------------------------------------------------------------
@@ -1186,7 +1198,7 @@ class Technology:
 class Inventory:
     """An agent's inventory of resources."""
 
-    items: Dict[ResourceType, float] = field(default_factory=dict)
+    items: dict[ResourceType, float] = field(default_factory=dict)
     max_capacity: float = 100.0
 
     def add(self, resource: ResourceType, amount: float) -> float:
@@ -1221,10 +1233,10 @@ class Market:
     market_id: EntityID
     position: Pos2D
     tick: int
-    price_index: Dict[ResourceType, float]  # Relative to base value
-    supply: Dict[ResourceType, float]
-    demand: Dict[ResourceType, float]
-    active_trades: List[EntityID] = field(default_factory=list)
+    price_index: dict[ResourceType, float]  # Relative to base value
+    supply: dict[ResourceType, float]
+    demand: dict[ResourceType, float]
+    active_trades: list[EntityID] = field(default_factory=list)
 
     def get_price(self, resource: ResourceType) -> float:
         return resource.base_value * self.price_index.get(resource, 1.0)
@@ -1243,7 +1255,7 @@ class Relationship:
     trust: float = 0.5  # 0.0-1.0
     respect: float = 0.5
     affection: float = 0.5
-    history: Tuple[str, ...] = field(default_factory=tuple)  # Event summaries
+    history: tuple[str, ...] = field(default_factory=tuple)  # Event summaries
     interactions_count: int = 0
     last_interaction_tick: int = 0
 
@@ -1280,9 +1292,9 @@ class NarrativeArc:
     arc_id: EntityID
     name: str
     arc_type: str  # e.g., "tragedy", "hero's journey", "political intrigue"
-    participants: FrozenSet[EntityID]
-    events: Tuple[Event, ...]
-    themes: Tuple[str, ...]
+    participants: frozenset[EntityID]
+    events: tuple[Event, ...]
+    themes: tuple[str, ...]
     status: str  # "active", "completed", "abandoned"
     significance: float  # 0.0-1.0
 
@@ -1295,8 +1307,8 @@ class HistoricalRecord:
     tick: int
     title: str
     content: str
-    author_id: Optional[EntityID]
-    source_agent_ids: FrozenSet[EntityID]
+    author_id: EntityID | None
+    source_agent_ids: frozenset[EntityID]
     verified: bool = False
 
 
@@ -1311,7 +1323,7 @@ class Chunk:
 
     chunk_x: int
     chunk_y: int
-    tile_positions: FrozenSet[Pos2D]
-    agent_ids: FrozenSet[EntityID]
-    organization_ids: FrozenSet[EntityID]
-    resource_nodes: FrozenSet[str]  # IDs
+    tile_positions: frozenset[Pos2D]
+    agent_ids: frozenset[EntityID]
+    organization_ids: frozenset[EntityID]
+    resource_nodes: frozenset[str]  # IDs

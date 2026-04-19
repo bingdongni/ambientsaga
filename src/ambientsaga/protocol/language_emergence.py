@@ -7,9 +7,9 @@ agents converge on the same interpretation, a shared vocabulary emerges.
 
 from __future__ import annotations
 
-from collections import defaultdict
-from dataclasses import dataclass, field
 import random
+from collections import defaultdict
+from dataclasses import dataclass
 
 
 @dataclass

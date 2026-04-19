@@ -18,34 +18,33 @@ from __future__ import annotations
 import random
 import time
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
 
-from ambientsaga.config import AgentConfig, CognitionConfig
-from ambientsaga.types import (
-    EntityID,
-    Pos2D,
-    AgentAttributes,
-    Inventory,
-    Relationship,
-    Decision,
-    DecisionType,
-    Signal,
-    SignalType,
-    ResourceType,
-    Organization,
-)
 from ambientsaga.agents.core import AgentTier
+from ambientsaga.types import TerrainType
 
 # === Ultimate Emergence: Agent Humanity Layer ===
 from ambientsaga.emergence.humanity_layer import (
     AgentHumanityLayer,
     EmotionType,
 )
+from ambientsaga.types import (
+    AgentAttributes,
+    Decision,
+    DecisionType,
+    EntityID,
+    Inventory,
+    Pos2D,
+    Relationship,
+    ResourceType,
+    Signal,
+)
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.world.signal_bus import SignalSubscription
+    from ambientsaga.world.state import World
 
 
 @dataclass
@@ -64,7 +63,7 @@ class CognitiveBelief:
         confirms: bool,
         strength: float,
         current_tick: int,
-    ) -> "CognitiveBelief":
+    ) -> CognitiveBelief:
         """Update belief with new evidence (Bayesian-inspired)."""
         if confirms:
             new_confidence = min(1.0, self.confidence + strength * (1 - self.confidence))
@@ -306,7 +305,7 @@ class Agent:
     # -------------------------------------------------------------------------
 
     def decide_action(
-        self, tick: int, world: "World"
+        self, tick: int, world: World
     ) -> Decision | None:
         """Decide what action to take."""
         if not self.is_alive:
@@ -361,7 +360,7 @@ class Agent:
             self._humanity_layer.update(tick)
 
     def _select_action(
-        self, tick: int, world: "World"
+        self, tick: int, world: World
     ) -> Decision | None:
         """Select the best action based on current state."""
         goal = self.current_goal or "wander"
@@ -386,7 +385,7 @@ class Agent:
         else:
             return self._action_wander(tick, world)
 
-    def _action_seek_food(self, tick: int, world: "World") -> Decision:
+    def _action_seek_food(self, tick: int, world: World) -> Decision:
         """Seek food."""
         # Find nearest food
         nearest_food: Pos2D | None = None
@@ -423,7 +422,7 @@ class Agent:
         # No food nearby, wander
         return self._action_wander(tick, world)
 
-    def _action_seek_water(self, tick: int, world: "World") -> Decision:
+    def _action_seek_water(self, tick: int, world: World) -> Decision:
         """Seek water."""
         for x in range(
             max(0, self.x - 20), min(world._config.world.width, self.x + 20)
@@ -456,7 +455,7 @@ class Agent:
             algorithm="rule",
         )
 
-    def _action_wander(self, tick: int, world: "World") -> Decision:
+    def _action_wander(self, tick: int, world: World) -> Decision:
         """Random movement."""
         # Move to adjacent walkable tile
         dx = world._rng.integers(-1, 2)
@@ -486,7 +485,7 @@ class Agent:
             algorithm="rule",
         )
 
-    def _action_socialize(self, tick: int, world: "World") -> Decision:
+    def _action_socialize(self, tick: int, world: World) -> Decision:
         """Try to interact with nearby agents."""
         nearby = list(world.get_agents_near(self.position, 3.0))
         if nearby:
@@ -501,7 +500,7 @@ class Agent:
             )
         return self._action_wander(tick, world)
 
-    def _action_trade(self, tick: int, world: "World") -> Decision:
+    def _action_trade(self, tick: int, world: World) -> Decision:
         """Attempt to trade."""
         return Decision(
             tick=tick,
@@ -511,7 +510,7 @@ class Agent:
             algorithm="market",
         )
 
-    def _action_work(self, tick: int, world: "World") -> Decision:
+    def _action_work(self, tick: int, world: World) -> Decision:
         """Do productive work."""
         skill = max(self.skills, key=lambda s: self.skills[s])
         self.remember("work", {"skill": skill, "level": self.skills[skill]}, 0.3, tick)
@@ -523,7 +522,7 @@ class Agent:
             algorithm="skill_based",
         )
 
-    def _action_explore(self, tick: int, world: "World") -> Decision:
+    def _action_explore(self, tick: int, world: World) -> Decision:
         """Explore the world."""
         # Move toward unexplored area
         return Decision(
@@ -538,7 +537,7 @@ class Agent:
     # Action Execution
     # -------------------------------------------------------------------------
 
-    def execute_action(self, decision: Decision, world: "World") -> None:
+    def execute_action(self, decision: Decision, world: World) -> None:
         """Execute a decision."""
         if decision is None:
             return
@@ -568,7 +567,7 @@ class Agent:
         elif decision.decision_type == DecisionType.TRADE:
             self._do_trade(world)
 
-    def _consume_food(self, world: "World") -> None:
+    def _consume_food(self, world: World) -> None:
         """Consume food at current location."""
         terrain = world.get_terrain(self.x, self.y)
         if terrain in (
@@ -576,13 +575,13 @@ class Agent:
         ):
             self.inventory.add(ResourceType.FRUIT, 1.0)
 
-    def _consume_water(self, world: "World") -> None:
+    def _consume_water(self, world: World) -> None:
         """Consume water at current location."""
         terrain = world.get_terrain(self.x, self.y)
         if terrain.is_water:
             self.thirst = 0.0
 
-    def _socialize(self, other_id: EntityID, world: "World") -> None:
+    def _socialize(self, other_id: EntityID, world: World) -> None:
         """Interact with another agent."""
         world.set_relationship(
             self.entity_id,
@@ -596,7 +595,7 @@ class Agent:
             world.tick,
         )
 
-    def _do_work(self, world: "World") -> None:
+    def _do_work(self, world: World) -> None:
         """Perform productive work."""
         # Add some wealth based on skills
         skill_level = sum(self.skills.values()) / len(self.skills)
@@ -604,7 +603,7 @@ class Agent:
         self.wealth += earnings
         self.energy = max(0.0, self.energy - 0.02)
 
-    def _do_trade(self, world: "World") -> None:
+    def _do_trade(self, world: World) -> None:
         """Attempt to trade."""
         # Simple trade logic
         if self.inventory.total_weight() > 20:
@@ -701,7 +700,7 @@ class AgentFactory:
         "the Trader", "the Scholar", "the Warrior", "the Farmer", "the Shepherd",
     ]
 
-    def __init__(self, world: "World") -> None:
+    def __init__(self, world: World) -> None:
         self.world = world
         self._name_used: set[str] = set()
         self._agent_index = 0
@@ -895,6 +894,3 @@ class AgentFactory:
         for skill in agent.skills:
             agent.skills[skill] = rng.uniform(0.3, 0.7) + tier_bonus
 
-
-# Import TerrainType at module level for action methods
-from ambientsaga.types import TerrainType

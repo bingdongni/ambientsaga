@@ -10,18 +10,17 @@ Usage:
 """
 
 import argparse
-import asyncio
 import sys
 from pathlib import Path
+
 import numpy as np
 
-from ambientsaga.config import Config
-from ambientsaga.world.state import World
 from ambientsaga.agents import UnifiedAgentFactory as AgentFactory
-from ambientsaga.natural.terrain import TerrainGenerator
+from ambientsaga.config import Config
 from ambientsaga.natural.climate import ClimateSystem
+from ambientsaga.scenarios import Scenario, ScenarioLoader, ScenarioRegistry, WorldGenerator
 from ambientsaga.types import TerrainType
-from ambientsaga.scenarios import Scenario, ScenarioRegistry, WorldGenerator, ScenarioLoader
+from ambientsaga.world.state import World
 
 # Web visualization imports (optional - only if visualization enabled)
 _visualization_module = None
@@ -75,7 +74,7 @@ def handle_scenario_command(args: argparse.Namespace) -> int:
         print(f"\nDuration: {scenario.duration_ticks if scenario.duration_ticks > 0 else 'Unlimited'} ticks")
 
         if scenario.world_params:
-            print(f"\nWorld Parameters:")
+            print("\nWorld Parameters:")
             for k, v in scenario.world_params.items():
                 print(f"  {k}: {v}")
 
@@ -101,10 +100,10 @@ def handle_scenario_command(args: argparse.Namespace) -> int:
         scenario = Scenario(name=args.name)
         ScenarioLoader.save(scenario, args.output)
         print(f"Created scenario at: {args.output}")
-        print(f"\nEdit the scenario file to customize:")
-        print(f"  - Initial conditions (population, resources, structures)")
-        print(f"  - Scheduled events (disasters, migrations, discoveries)")
-        print(f"  - Victory conditions (goals to achieve)")
+        print("\nEdit the scenario file to customize:")
+        print("  - Initial conditions (population, resources, structures)")
+        print("  - Scheduled events (disasters, migrations, discoveries)")
+        print("  - Victory conditions (goals to achieve)")
         return 0
 
     elif args.action == "run":
@@ -126,7 +125,7 @@ def handle_scenario_command(args: argparse.Namespace) -> int:
         world_gen = WorldGenerator(config)
         world_gen.apply_scenario(scenario)
 
-        print(f"Generating world...")
+        print("Generating world...")
         world = world_gen.generate()
 
         print(f"World generated: {config.simulation.world.width}x{config.simulation.world.height}")
@@ -147,7 +146,7 @@ def handle_scenario_command(args: argparse.Namespace) -> int:
                 tps = (tick + 1) / elapsed if elapsed > 0 else 0
                 print(f"  Tick {tick:>8} | Agents: {world.get_agent_count():>6} | {tps:>6.1f} ticks/s")
 
-        print(f"\nSimulation complete!")
+        print("\nSimulation complete!")
         print(f"Final population: {world.get_agent_count()}")
 
         return 0
@@ -306,8 +305,6 @@ Examples:
 def run_simulation(args: argparse.Namespace) -> int:
     """Run a simulation."""
     from ambientsaga.config import Config
-    from ambientsaga.world.state import World
-    from ambientsaga.agents import UnifiedAgentFactory as AgentFactory
     from ambientsaga.natural import TerrainGenerator
 
     # Create config
@@ -319,7 +316,7 @@ def run_simulation(args: argparse.Namespace) -> int:
     # Apply scenario if specified
     active_scenario = None
     if args.scenario:
-        from ambientsaga.scenarios import ScenarioRegistry, WorldGenerator
+        from ambientsaga.scenarios import ScenarioRegistry
         registry = ScenarioRegistry()
         scenario = registry.get(args.scenario)
 
@@ -358,7 +355,7 @@ def run_simulation(args: argparse.Namespace) -> int:
         config.simulation.visualization.enabled = True
         config.simulation.visualization.renderer_type = "canvas"
 
-    print(f"Initializing AmbientSaga world...")
+    print("Initializing AmbientSaga world...")
     print(f"  World: {config.simulation.world.width}x{config.simulation.world.height}")
     print(f"  Agents: {config.simulation.agents.total_agents}")
     print(f"  Preset: {args.preset}")
@@ -381,7 +378,6 @@ def run_simulation(args: argparse.Namespace) -> int:
     world._soil = terrain_data["soil"]
 
     # Initialize climate system (temperature, humidity)
-    from ambientsaga.natural.climate import ClimateSystem
     climate = ClimateSystem(
         config.simulation.climate,
         config.simulation.world.width,
@@ -442,7 +438,7 @@ def run_simulation(args: argparse.Namespace) -> int:
     web_server = None
     if config.simulation.visualization.enabled:
         try:
-            from ambientsaga.visualization.web_server import WebServer, StandaloneWebServer
+            from ambientsaga.visualization.web_server import StandaloneWebServer, WebServer
             web_host = config.simulation.visualization.web_host
             web_port = config.simulation.visualization.web_port
 
@@ -534,8 +530,8 @@ def run_simulation(args: argparse.Namespace) -> int:
 
     # Generate academic report if requested
     if args.report:
-        from ambientsaga.research.metrics import MetricsCollector
         from ambientsaga.config import ResearchConfig
+        from ambientsaga.research.metrics import MetricsCollector
 
         print("\nGenerating academic report...")
         research_config = ResearchConfig()
@@ -596,15 +592,14 @@ def init_world(args: argparse.Namespace) -> int:
 
 def run_benchmark(args: argparse.Namespace) -> int:
     """Run a benchmark simulation."""
-    from ambientsaga.config import Config
-    from ambientsaga.world.state import World
-    from ambientsaga.agents import UnifiedAgentFactory as AgentFactory
-    from ambientsaga.natural import TerrainGenerator
-    from ambientsaga.research.metrics import MetricsCollector
     import json
     from datetime import datetime
 
-    print(f"Running benchmark...")
+    from ambientsaga.config import Config
+    from ambientsaga.natural import TerrainGenerator
+    from ambientsaga.research.metrics import MetricsCollector
+
+    print("Running benchmark...")
     print(f"  Duration: {args.duration} ticks")
     print(f"  Agents: {args.agents}")
 

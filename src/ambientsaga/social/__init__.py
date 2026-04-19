@@ -2,10 +2,10 @@
 
 from ambientsaga.social.organizations import OrganizationManager
 from ambientsaga.social.stratification import (
-    SocialStratificationSystem,
-    SocialClass,
     ClassPosition,
     HierarchyNode,
+    SocialClass,
+    SocialStratificationSystem,
     StratificationPattern,
 )
 
