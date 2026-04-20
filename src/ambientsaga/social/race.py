@@ -22,8 +22,6 @@ from typing import Any
 
 import numpy as np
 
-from ambientsaga.types import EntityID
-
 
 class SkinTone(Enum):
     """Skin tone categories."""

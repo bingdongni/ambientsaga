@@ -31,10 +31,6 @@ from ambientsaga.config import Config, SimulationConfig
 # === Cultural Collision System ===
 from ambientsaga.culture.collision import CulturalCollisionSystem
 
-# === NEW: Social Systems ===
-from ambientsaga.social.settlement import SettlementManager
-from ambientsaga.social.ethnicity import EthnicGroupManager
-
 # === NEW: Ultimate Emergence Systems ===
 from ambientsaga.emergence.butterfly_effects import (
     ButterflyEffectSystem,
@@ -65,6 +61,10 @@ from ambientsaga.protocol.reputation import ReputationNetwork
 from ambientsaga.protocol.social_norms import EmergentNorms
 from ambientsaga.science import ScienceEngine
 from ambientsaga.science.functional_science import FunctionalScienceEngine
+from ambientsaga.social.ethnicity import EthnicGroupManager
+
+# === NEW: Social Systems ===
+from ambientsaga.social.settlement import SettlementManager
 
 # === Social Stratification System ===
 from ambientsaga.social.stratification import SocialStratificationSystem
