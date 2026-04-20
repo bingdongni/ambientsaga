@@ -468,7 +468,7 @@ What should you do? Respond with JSON:
 
         client = anthropic.Anthropic(api_key=self.api_key)
 
-        context_str = json.dumps(context, indent=2, ensure_ascii=False)
+        json.dumps(context, indent=2, ensure_ascii=False)
 
         prompt = f"""You are {context['agent_name']}, a person in a simulated world.
 
@@ -855,7 +855,7 @@ class CognitiveManager:
         self._deliberation_count += 1
 
         # Build deliberation context
-        deliberation_context = self.deliberator._build_context(agent, context, world)
+        self.deliberator._build_context(agent, context, world)
 
         # Deliberate
         result = await self.deliberator.deliberate(agent, context, world)

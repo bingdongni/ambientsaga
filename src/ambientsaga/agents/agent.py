@@ -23,7 +23,6 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ambientsaga.agents.core import AgentTier
-from ambientsaga.types import TerrainType
 
 # === Ultimate Emergence: Agent Humanity Layer ===
 from ambientsaga.emergence.humanity_layer import (
@@ -40,6 +39,7 @@ from ambientsaga.types import (
     Relationship,
     ResourceType,
     Signal,
+    TerrainType,
 )
 
 if TYPE_CHECKING:

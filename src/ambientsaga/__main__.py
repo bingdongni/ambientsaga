@@ -314,7 +314,6 @@ def run_simulation(args: argparse.Namespace) -> int:
         config = Config.from_file(args.config)
 
     # Apply scenario if specified
-    active_scenario = None
     if args.scenario:
         from ambientsaga.scenarios import ScenarioRegistry
         registry = ScenarioRegistry()
@@ -324,7 +323,6 @@ def run_simulation(args: argparse.Namespace) -> int:
             print(f"Loading scenario: {scenario.name}")
             print(f"  {scenario.description[:80]}...")
             print(f"  Difficulty: {scenario.difficulty}")
-            active_scenario = scenario
 
             # Override duration from scenario if set
             if scenario.duration_ticks > 0:
@@ -335,7 +333,6 @@ def run_simulation(args: argparse.Namespace) -> int:
             if Path(args.scenario).exists():
                 scenario = ScenarioLoader.from_file(args.scenario)
                 print(f"Loading scenario from file: {args.scenario}")
-                active_scenario = scenario
             else:
                 print(f"Warning: Scenario '{args.scenario}' not found")
 
@@ -396,7 +393,7 @@ def run_simulation(args: argparse.Namespace) -> int:
     for y in range(config.simulation.world.height):
         for x in range(config.simulation.world.width):
             terrain = TerrainType(world._terrain[y, x])
-            temp = world._temperature[y, x]
+            world._temperature[y, x]
             humid = world._humidity[y, x]
             # Simple vegetation model
             if terrain.is_water:
