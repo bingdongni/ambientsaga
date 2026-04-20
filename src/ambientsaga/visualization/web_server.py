@@ -171,7 +171,6 @@ class WebServer:
 
     async def _start_ws_server(self) -> None:
         """Start the WebSocket server with HTTP serving via process_request."""
-        import websockets
         from websockets.exceptions import ConnectionClosed
 
         async def ping_clients():
@@ -227,7 +226,6 @@ class WebServer:
         async def start_server() -> None:
             try:
                 import websockets
-                from websockets.server import WebSocketServerProtocol
 
                 async def http_handler(process_request, request_path, request_headers):
                     """Handle HTTP requests by serving the HTML client."""
