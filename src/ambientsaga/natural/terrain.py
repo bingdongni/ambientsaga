@@ -882,7 +882,7 @@ class TerrainGenerator:
             y_indices, x_indices = np.where(placement_mask)
 
             # Create MineralDeposit for each selected position
-            for ix, iy in zip(x_indices, y_indices):
+            for ix, iy in zip(x_indices, y_indices):  # noqa: B905
                 minerals[(ix, iy)] = MineralDeposit(
                     position=Pos2D(ix, iy),
                     mineral_type=self._rng.choice(mineral_types),

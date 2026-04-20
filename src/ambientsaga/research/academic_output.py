@@ -435,7 +435,7 @@ class StatisticalAnalyzer:
         mean_x = StatisticalAnalyzer.mean(x)
         mean_y = StatisticalAnalyzer.mean(y)
 
-        numerator = sum((xi - mean_x) * (yi - mean_y) for xi, yi in zip(x, y))
+        numerator = sum((xi - mean_x) * (yi - mean_y) for xi, yi in zip(x, y))  # noqa: B905
         denom_x = math.sqrt(sum((xi - mean_x) ** 2 for xi in x))
         denom_y = math.sqrt(sum((yi - mean_y) ** 2 for yi in y))
 
@@ -476,7 +476,7 @@ class StatisticalAnalyzer:
             return ranks
 
         rx, ry = rank(x), rank(y)
-        d_squared = sum((a - b) ** 2 for a, b in zip(rx, ry))
+        d_squared = sum((a - b) ** 2 for a, b in zip(rx, ry))  # noqa: B905
 
         rho = 1 - (6 * d_squared) / (n * (n**2 - 1))
 
@@ -508,7 +508,7 @@ class StatisticalAnalyzer:
         x_mean = n / 2
         y_mean = StatisticalAnalyzer.mean(values)
 
-        numerator = sum((xi - x_mean) * (yi - y_mean) for xi, yi in zip(x, values))
+        numerator = sum((xi - x_mean) * (yi - y_mean) for xi, yi in zip(x, values))  # noqa: B905
         denominator = sum((xi - x_mean) ** 2 for xi in x)
 
         if denominator == 0:
@@ -518,7 +518,7 @@ class StatisticalAnalyzer:
 
         # R-squared
         y_pred = [y_mean + slope * (xi - x_mean) for xi in x]
-        ss_res = sum((yi - yp) ** 2 for yi, yp in zip(values, y_pred))
+        ss_res = sum((yi - yp) ** 2 for yi, yp in zip(values, y_pred))  # noqa: B905
         ss_tot = sum((yi - y_mean) ** 2 for yi in values)
         r_squared = 1 - ss_res / max(ss_tot, 0.001)
 

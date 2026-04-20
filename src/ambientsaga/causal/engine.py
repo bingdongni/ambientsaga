@@ -69,7 +69,7 @@ class UnifiedCausalEngine:
     Input(领域A变化) → 检测变化 → 计算因果强度 → 传播到下游领域 → 触发响应
     """
 
-    def __init__(self, world: "World") -> None:
+    def __init__(self, world: World) -> None:
         self.world = world
         self._links: list[CausalLink] = []
         self._domain_states: dict[str, float] = {
