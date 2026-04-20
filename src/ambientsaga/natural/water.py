@@ -123,7 +123,7 @@ class HydrologySystem:
         H, W = terrain.shape
 
         # Temperature for snow/rain distinction and evaporation
-        current_temp = float(np.mean(temperature))
+        float(np.mean(temperature))
 
         for y in range(H):
             for x in range(W):

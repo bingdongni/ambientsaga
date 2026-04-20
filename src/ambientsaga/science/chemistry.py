@@ -497,8 +497,8 @@ class ChemistryEngine:
         max_glucose = min(co2 / 6, water / 6) * sunlight_factor
         glucose = max_glucose
         o2_released = glucose * 6
-        co2_consumed = glucose * 6
-        water_consumed = glucose * 6
+        glucose * 6
+        glucose * 6
         energy_stored = glucose * 2800  # kJ
 
         return glucose, o2_released, energy_stored

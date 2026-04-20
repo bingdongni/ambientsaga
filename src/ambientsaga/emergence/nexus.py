@@ -57,16 +57,11 @@ class CausalDomain:
         ECOLOGY: {ECONOMICS, SOCIAL},
 
         # 社会科学链
-        ECONOMICS: {SOCIAL, POLITICAL},
-        SOCIAL: {POLITICAL, CULTURAL, PSYCHOLOGICAL},
+        ECONOMICS: {SOCIAL, POLITICAL, ECOLOGY},  # 经济活动影响生态（合并）
+        SOCIAL: {POLITICAL, CULTURAL, PSYCHOLOGICAL, BIOLOGY},  # 社会行为影响生物（合并）
         POLITICAL: {CULTURAL, ECONOMICS},
-        CULTURAL: {PSYCHOLOGICAL, SOCIAL},
+        CULTURAL: {PSYCHOLOGICAL, SOCIAL, ECOLOGY},  # 文化影响环境（合并）
         PSYCHOLOGICAL: {SOCIAL, ECONOMICS},
-
-        # 反向耦合（社会影响自然）
-        ECONOMICS: {ECOLOGY},  # 经济活动影响生态
-        SOCIAL: {BIOLOGY},      # 社会行为影响生物
-        CULTURAL: {ECOLOGY},   # 文化影响环境
     }
 
     @classmethod

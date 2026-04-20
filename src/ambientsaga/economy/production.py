@@ -115,7 +115,7 @@ class Recipe:
 
         # Environmental bonuses
         bonuses = bonuses or {}
-        for bonus_name, bonus_value in bonuses.items():
+        for _bonus_name, bonus_value in bonuses.items():
             eff *= (1.0 + bonus_value)
 
         return min(2.0, eff)  # Cap at 2x efficiency

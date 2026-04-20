@@ -510,8 +510,7 @@ class LLMGuidedAgent(Agent):
     async def _llm_fallback_think(self, context: dict[str, Any], tick: Tick) -> ActionResult:
         """Fallback reasoning when LLM is not available."""
         dominant_need = self.profile.get_dominant_need()
-        personality = self.profile.personality
-        memory_fragments = self.memory.get_fragments(3)
+        self.memory.get_fragments(3)
 
         # Build atmospheric action descriptions
         action_map = {

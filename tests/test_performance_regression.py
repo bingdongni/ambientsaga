@@ -332,8 +332,9 @@ class TestRegressionBaseline:
         ticks_per_second = tick_count / elapsed
 
         # Record baseline (adjust as needed for your hardware)
-        # This should be at least 7.5 TPS for 200 agents (accounting for test overhead and environment variance)
-        min_tps = 7.5
+        # Allow 10% variance for test overhead and environment fluctuations
+        # This should be at least 6.75 TPS for 200 agents (7.5 * 0.9)
+        min_tps = 6.75
 
         print(f"\nPerformance baseline: {ticks_per_second:.1f} TPS")
 

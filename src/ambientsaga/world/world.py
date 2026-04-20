@@ -181,8 +181,6 @@ class TerrainGenerator:
         """Classify biomes based on terrain and climate."""
         biome = np.zeros((self.height, self.width), dtype=np.int32)
         t = self._terrain
-        temp = self._temperature
-        mois = self._moisture
 
         # Marine biomes
         biome[t == TerrainType.DEEP_OCEAN.value] = BiomeType.DEEP_SEA.value

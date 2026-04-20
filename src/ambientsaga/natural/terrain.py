@@ -704,7 +704,7 @@ class TerrainGenerator:
         land_mask = np.array([
             TerrainType(t).is_land for t in terrain.flatten()
         ]).reshape(H, W)
-        land_elev = np.where(land_mask, elevation, -np.inf)
+        np.where(land_mask, elevation, -np.inf)
 
         # Use quantile-based threshold for source tiles (top 5% of land elevation)
         source_threshold = np.quantile(elevation[land_mask], 0.95)
@@ -805,7 +805,7 @@ class TerrainGenerator:
 
         # Use vectorized noise for terrain-appropriate soil variation
         y_grid, x_grid = np.mgrid[0:H, 0:W]
-        soil_noise = self._rng.random((H, W))  # Pseudo-random for variety
+        self._rng.random((H, W))  # Pseudo-random for variety
 
         soil = np.select(
             [

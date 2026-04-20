@@ -528,7 +528,7 @@ class VariationEngine:
 
     def get_statistics(self) -> dict:
         """Get variation engine statistics."""
-        total_mutations = sum(self.mutation_counts.values())
+        sum(self.mutation_counts.values())
 
         return {
             "total_mutations": self.total_mutations,

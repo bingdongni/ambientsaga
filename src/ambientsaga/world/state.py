@@ -586,7 +586,7 @@ class World:
 
         with self._lock:
             # Get actual positions from our tracking dict
-            for eid, approx_x, approx_y in agent_ids:
+            for eid, _approx_x, _approx_y in agent_ids:
                 # Use approximate position from chunk for quick filter
                 # Then get exact position from our tracking
                 exact_pos = self._agent_positions.get(eid)
@@ -1267,7 +1267,7 @@ class World:
                 pos.x, pos.y, radius
             )
             nearby = []
-            for eid, approx_x, approx_y in candidate_ids:
+            for eid, _approx_x, _approx_y in candidate_ids:
                 # Use pre-fetched positions (avoid redundant dict lookup)
                 exact_pos = agent_positions.get(eid)
                 if exact_pos is None:
@@ -1348,7 +1348,7 @@ class World:
 
         for agent in sampled:
             # Get perception from previous phase
-            perceived = getattr(agent, "_perceived", None)
+            getattr(agent, "_perceived", None)
 
             # === NEXUS: 原生涌现决策增强 ===
             # 获取因果上下文
@@ -2280,7 +2280,7 @@ class World:
             grid[key].append(agent.entity_id)
 
         # For each grid cell with enough agents, try to form an organization
-        for (gx, gy), members in grid.items():
+        for (_gx, _gy), members in grid.items():
             if len(self._organizations) >= 50:
                 break
 
@@ -2467,7 +2467,7 @@ class World:
 
             # Check for interactions with nearby agents (cultural learning)
             nearby = list(self.get_agents_near(agent.position, 10.0))
-            for other, dist in nearby[:3]:  # Limit to top 3 nearby
+            for other, _dist in nearby[:3]:  # Limit to top 3 nearby
                 if other.entity_id == agent.entity_id or not other.is_alive:
                     continue
 
@@ -2789,7 +2789,7 @@ class World:
         stats = self.get_stats()
         pstats = stats.get("protocol", {})
         evo_stats = pstats.get("evolution", {})
-        nexus_stats = stats.get("nexus", {})
+        stats.get("nexus", {})
 
         # Get NEXUS stats
         nexus_info = ""

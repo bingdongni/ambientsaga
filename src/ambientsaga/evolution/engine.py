@@ -553,7 +553,7 @@ class EvolutionEngine:
         strong_pairs.sort(key=lambda x: x[1], reverse=True)
 
         # Check for social/institution-relevant pairs
-        social_pairs = [
+        [
             p for p in strong_pairs
             if any(g in p for g in ["SHARE", "HELP", "EXCHANGE", "COOPERATE", "GIVE", "GIFT"])
         ]

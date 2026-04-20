@@ -292,7 +292,7 @@ class PoliticalSystem:
 
     def get_laws_by_type(self, law_type: LawType) -> list[Law]:
         """Get all laws of a type."""
-        return [l for l in self._laws.values() if l.law_type == law_type]
+        return [law for law in self._laws.values() if law.law_type == law_type]
 
     def create_law(
         self,

@@ -531,7 +531,7 @@ class Ecosystem:
         H, W = self._terrain.shape
         populations: list[float] = []
 
-        for species_id, pop in self._population.items():
+        for _species_id, pop in self._population.items():
             if 0 <= y < H and 0 <= x < W:
                 populations.append(float(pop[y, x]))
 

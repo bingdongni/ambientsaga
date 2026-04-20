@@ -254,7 +254,7 @@ class InstitutionalEmergenceEngine:
                 law_name = f"Prohibition_of_{violation_type}"
 
                 # 检查是否已存在
-                existing = [l for l in self.emergent_laws.values() if law_name in l.name]
+                existing = [e_law for e_law in self.emergent_laws.values() if law_name in e_law.name]
                 if existing:
                     return None
 

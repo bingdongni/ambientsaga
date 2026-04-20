@@ -104,10 +104,9 @@ class FunctionalPhysics:
         """
         config = getattr(self.world, '_config', None)
         if config and hasattr(config, 'simulation'):
-            base_temp = getattr(config.simulation.climate, 'base_temperature', 15.0)
+            getattr(config.simulation.climate, 'base_temperature', 15.0)
             lapse_rate = getattr(config.simulation.climate, 'temperature_lapse_rate', 6.5)
         else:
-            base_temp = 15.0
             lapse_rate = 6.5
 
         if hasattr(self.world, '_temperature') and self.world._temperature is not None:
@@ -147,8 +146,8 @@ class FunctionalPhysics:
         if hasattr(self.world, '_elevation') and self.world._elevation is not None:
             elevation = self.world._elevation
             temp = self._calculate_temperature_distribution()
-            avg_temp = np.mean(temp) + 273.15  # 转为开尔文
-            avg_elevation = np.mean(elevation)
+            np.mean(temp) + 273.15  # 转为开尔文
+            np.mean(elevation)
 
             # 标准大气压模型
             pressure_0 = 101325  # Pa
@@ -594,7 +593,7 @@ class FunctionalBiology:
         """获取氧气水平"""
         # 从物理引擎获取
         physics_state = getattr(self.world, '_physics_state', {})
-        altitude_effects = physics_state.get('altitude_effect', {})
+        physics_state.get('altitude_effect', {})
 
         # 如果没有，使用默认值
         if hasattr(self.world, '_elevation') and self.world._elevation is not None:

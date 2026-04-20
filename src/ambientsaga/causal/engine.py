@@ -4,9 +4,11 @@ Unified Causal Engine - 统一因果引擎
 实现全域动态耦合，所有领域通过因果传导链相互影响。
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ambientsaga.world.state import World
@@ -166,13 +168,13 @@ class UnifiedCausalEngine:
             strength=CausalityStrength.MODERATE,
         ))
 
-    def get_causal_links(self, source_domain: Optional[str] = None, target_domain: Optional[str] = None) -> list[CausalLink]:
+    def get_causal_links(self, source_domain: str | None = None, target_domain: str | None = None) -> list[CausalLink]:
         """获取因果链"""
         links = self._links
         if source_domain:
-            links = [l for l in links if l.source_domain == source_domain]
+            links = [link for link in links if link.source_domain == source_domain]
         if target_domain:
-            links = [l for l in links if l.target_domain == target_domain]
+            links = [link for link in links if link.target_domain == target_domain]
         return links
 
     def add_causal_link(self, link: CausalLink) -> None:
@@ -280,7 +282,7 @@ class UnifiedCausalEngine:
         """获取因果系统统计"""
         return {
             "total_links": len(self._links),
-            "enabled_links": len([l for l in self._links if l.enabled]),
+            "enabled_links": len([link for link in self._links if link.enabled]),
             "causation_events_count": len(self._causation_events),
             "domain_states": self._domain_states.copy(),
             "strongest_coupling": self._get_strongest_coupling(),

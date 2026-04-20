@@ -841,9 +841,6 @@ class MetaProtocol:
             rel = agent.relationships.get(other.entity_id)
             if rel:
                 trust = rel.trust
-                affection = rel.affection
-                respect = rel.respect
-                interactions = rel.interactions_count
 
                 # TIT-FOR-TAT strategy based on trust
                 if trust > 0.7 and rng.random() < trust * 0.6:
@@ -1140,8 +1137,8 @@ class MetaProtocol:
             rate = accepted / len(traces)
 
             # Check consistency of receivers (is this a "role" behavior?)
-            receivers = set(t.receiver_id for t in traces if t.receiver_id)
-            signalers = set(t.actor_id for t in traces if t.actor_id)
+            receivers = {t.receiver_id for t in traces if t.receiver_id}
+            signalers = {t.actor_id for t in traces if t.actor_id}
 
             patterns[signal] = {
                 "count": len(traces),

@@ -48,8 +48,8 @@ IntArray: TypeAlias = npt.NDArray[np.int32]
 BoolArray: TypeAlias = npt.NDArray[np.bool_]
 ByteArray: TypeAlias = npt.NDArray[np.uint8]
 
-ScalarFloat = Union[float, np.floating[Any]]
-ScalarInt = Union[int, np.integer[Any]]
+ScalarFloat = Union[float, np.floating[Any]]  # noqa: UP007
+ScalarInt = Union[int, np.integer[Any]]  # noqa: UP007
 
 # Simulation time
 Tick: TypeAlias = int  # Discrete simulation tick counter

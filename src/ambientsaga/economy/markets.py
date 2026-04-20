@@ -168,7 +168,7 @@ class MarketSystem:
     def _find_buyer(self, market: Market) -> EntityID | None:
         """Find a potential buyer near a market."""
         x, y = market.position.x, market.position.y
-        for agent, dist in self.world.get_agents_near(Pos2D(x, y), 20.0):
+        for agent, _dist in self.world.get_agents_near(Pos2D(x, y), 20.0):
             if agent.wealth > 10.0 and self._rng.random() < 0.01:
                 return agent.entity_id
         return None
@@ -176,7 +176,7 @@ class MarketSystem:
     def _find_seller(self, market: Market, resource: ResourceType) -> EntityID | None:
         """Find a potential seller of a resource near a market."""
         x, y = market.position.x, market.position.y
-        for agent, dist in self.world.get_agents_near(Pos2D(x, y), 20.0):
+        for agent, _dist in self.world.get_agents_near(Pos2D(x, y), 20.0):
             if agent.inventory.has(resource):
                 if self._rng.random() < 0.01:
                     return agent.entity_id

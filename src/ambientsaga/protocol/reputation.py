@@ -204,7 +204,7 @@ class ReputationNetwork:
         """
         # Aggregate all observations per target
         target_scores: dict[str, list[float]] = defaultdict(list)
-        for observer_id, views in self._views.items():
+        for _observer_id, views in self._views.items():
             for target_id, view in views.items():
                 if view.confidence > 0.3:
                     target_scores[target_id].append(view.score)

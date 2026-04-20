@@ -94,7 +94,7 @@ class Benchmark:
         phase_times: dict[str, float] = dict.fromkeys(world._tick_engine.TICK_PHASES, 0.0)
 
         start = time.perf_counter()
-        for tick in range(ticks):
+        for _tick in range(ticks):
             tick_start = time.perf_counter()
 
             world.tick_once()
@@ -129,11 +129,13 @@ class Benchmark:
 
     def run_scaling_study(
         self,
-        agent_counts: list[int] = [100, 500, 1000, 5000, 10000],
+        agent_counts: list[int] = None,
         world_size: tuple[int, int] = (256, 256),
         ticks: int = 1000,
     ) -> list[BenchmarkResult]:
         """Run a scaling study across different agent counts."""
+        if agent_counts is None:
+            agent_counts = [100, 500, 1000, 5000, 10000]
         results = []
         for n in agent_counts:
             print(f"Benchmarking {n} agents...")

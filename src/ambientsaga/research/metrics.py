@@ -22,8 +22,8 @@ import numpy as np
 from ambientsaga.config import ResearchConfig
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.research.academic_output import AcademicReport
+    from ambientsaga.world.state import World
 
 
 @dataclass
@@ -450,7 +450,7 @@ class MetricsCollector:
 
     def _generate_methodology(self) -> str:
         """Generate methodology section."""
-        latest = self._snapshots[-1] if self._snapshots else None
+        self._snapshots[-1] if self._snapshots else None
         return (
             "The AmbientSaga simulation framework was used to model a population of autonomous agents "
             "interacting in a shared environment. Agents make decisions based on their internal states, "
@@ -563,7 +563,7 @@ class MetricsCollector:
         analyzer = StatisticalAnalyzer()
         gini_series = [s.gini_coefficient for s in self._snapshots]
         pop_series = [float(s.population) for s in self._snapshots]
-        wealth_series = [s.avg_wealth for s in self._snapshots]
+        [s.avg_wealth for s in self._snapshots]
 
         # Correlation between Gini and population
         gini_pop_corr, _ = analyzer.pearson_correlation(gini_series, pop_series) if len(gini_series) >= 3 else (0.0, 1.0)

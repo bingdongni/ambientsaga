@@ -28,8 +28,8 @@ import numpy as np
 from ambientsaga.types import EntityID, new_entity_id
 
 if TYPE_CHECKING:
-    from ambientsaga.world.state import World
     from ambientsaga.config import CultureConfig
+    from ambientsaga.world.state import World
 
 
 # ---------------------------------------------------------------------------
@@ -546,7 +546,7 @@ class LanguageSystem:
             intelligibility *= 0.8  # Dialect barrier
 
         # Check comprehension
-        sender_agent = self.world.get_agent(sender_id)
+        self.world.get_agent(sender_id)
         receiver_agent = self.world.get_agent(receiver_id)
 
         comprehension_quality = intelligibility
@@ -766,16 +766,16 @@ class LanguageSystem:
             "total_languages": len(self._languages),
             "primary_language": self._primary_language_id,
             "active_languages": sum(
-                1 for l in self._languages.values() if not l.is_extinct
+                1 for lang in self._languages.values() if not lang.is_extinct
             ),
             "total_dialects": sum(
-                len(l.dialects) for l in self._languages.values()
+                len(lang.dialects) for lang in self._languages.values()
             ),
             "endangered_languages": sum(
-                1 for l in self._languages.values() if l.is_endangered
+                1 for lang in self._languages.values() if lang.is_endangered
             ),
             "extinct_languages": sum(
-                1 for l in self._languages.values() if l.is_extinct
+                1 for lang in self._languages.values() if lang.is_extinct
             ),
             "total_communications": self._total_communications,
             "total_misunderstandings": self._misunderstandings,

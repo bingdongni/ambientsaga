@@ -508,9 +508,9 @@ Respond with your decision and reasoning. Format your response as JSON:
                     "tokens": result["usage"]["input_tokens"] + result["usage"]["output_tokens"],
                 }
         except urllib.error.HTTPError as e:
-            raise RuntimeError(f"HTTP error: {e.code} {e.reason}")
+            raise RuntimeError(f"HTTP error: {e.code} {e.reason}") from e
         except urllib.error.URLError as e:
-            raise RuntimeError(f"URL error: {e.reason}")
+            raise RuntimeError(f"URL error: {e.reason}") from e
 
     def on_complete(
         self,

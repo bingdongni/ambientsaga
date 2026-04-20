@@ -294,7 +294,7 @@ class ProductionSystem:
         quality = min(1.5, max(0.5, quality))  # Clamp 0.5-1.5
 
         # Produce output
-        output_good = GoodType(recipe_name.split('_')[0].upper())
+        GoodType(recipe_name.split('_')[0].upper())
         # Map recipe to output type
         output_mapping = {
             "gather_food": GoodType.FOOD,
@@ -372,10 +372,10 @@ class Market:
 
     def get_price(self, good: GoodType) -> float | None:
         """Get average price for a good."""
-        relevant = [l for l in self.listings if l.good_type == good]
+        relevant = [listing for listing in self.listings if listing.good_type == good]
         if not relevant:
             return None
-        return sum(l.unit_price for l in relevant) / len(relevant)
+        return sum(listing.unit_price for listing in relevant) / len(relevant)
 
     def add_listing(
         self,

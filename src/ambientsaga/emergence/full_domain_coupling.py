@@ -897,7 +897,7 @@ class FullDomainCouplingEngine:
                 result = law.evaluate(context)
                 if result["success"]:
                     # 传播到受影响的域
-                    for affected_domain in law.affected_domains:
+                    for _affected_domain in law.affected_domains:
                         self._propagate_coupling(domain, law_id, result["result"])
                 return result
         return None

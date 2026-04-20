@@ -79,7 +79,7 @@ class EmergentEconomy:
         # Update specialization tracking
         for resource, amount in exchange.given.items():
             self._specialization[exchange.giver_id][resource] += amount
-        for resource, amount in exchange.received.items():
+        for _resource, _amount in exchange.received.items():
             # Receiving resources might indicate consumption need
             pass
 
@@ -198,7 +198,7 @@ class EmergentEconomy:
                     resource_participants[resource].add(e.giver_id)
                     resource_participants[resource].add(e.receiver_id)
                     resource_volumes[resource].append(amount)
-            for resource, amount in e.received.items():
+            for resource, _amount in e.received.items():
                 if resource != "gratitude":
                     resource_participants[resource].add(e.giver_id)
                     resource_participants[resource].add(e.receiver_id)
@@ -246,10 +246,10 @@ class EmergentEconomy:
             if freq < 5:
                 continue
             # Currency should appear in many different exchanges
-            unique_exchanges = len(set(
+            unique_exchanges = len({
                 e.trace_id for e in recent
                 if resource in e.given or resource in e.received
-            ))
+            })
             # Currency should appear in diverse pairs
             pairs = set()
             for e in recent:
@@ -302,8 +302,8 @@ class EmergentEconomy:
             }
         return {
             "total_exchanges": len(self._exchange_history),
-            "active_agents": len(set(e.giver_id for e in self._exchange_history[-500:])
-                                | set(e.receiver_id for e in self._exchange_history[-500:])),
+            "active_agents": len({e.giver_id for e in self._exchange_history[-500:]}
+                                | {e.receiver_id for e in self._exchange_history[-500:]}),
             "emergent_markets": len(self._emergent_markets),
             "trade_patterns": len(self._trade_patterns),
             "currency_candidates": self.detect_currency(200),

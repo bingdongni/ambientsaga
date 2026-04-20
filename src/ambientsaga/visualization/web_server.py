@@ -491,7 +491,6 @@ class WebServer:
 
     def _create_tick_update(self) -> dict[str, Any]:
         """Create an incremental tick update payload."""
-        config = self.world._config.world
 
         updated_agents = []
         for agent in self.world.get_all_agents():

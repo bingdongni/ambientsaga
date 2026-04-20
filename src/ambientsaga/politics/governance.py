@@ -1015,7 +1015,7 @@ class PoliticalSystem:
             jurisdiction="regional",
         )
 
-        govt = self.create_government(
+        self.create_government(
             name="Tribal Government",
             institution_id=inst.institution_id,
             authority_type=AuthorityType.TRADITIONAL,
@@ -1065,7 +1065,7 @@ class PoliticalSystem:
             "total_authorities": len(self._authorities),
             "total_laws": len(self._laws),
             "active_laws": sum(
-                1 for l in self._laws.values() if l.enacted_tick > 0
+                1 for law in self._laws.values() if law.enacted_tick > 0
             ),
             "total_policies": len(self._policies),
             "active_policies": sum(

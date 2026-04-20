@@ -819,19 +819,19 @@ class Renderer:
         """Enable or disable frame animation."""
         self._enable_animation = enabled
 
-    def set_zoom(self, zoom: float) -> None:
+    def set_zoom(self, zoom: float) -> None:  # noqa: F811
         """Set the zoom level (1.0 = full world, higher = zoomed in)."""
         self._target_zoom = max(0.1, min(10.0, zoom))
         self._zoom = self._target_zoom
 
-    def set_camera(self, x: float, y: float) -> None:
+    def set_camera(self, x: float, y: float) -> None:  # noqa: F811
         """Set the target camera center position."""
         self._target_camera_x = x
         self._target_camera_y = y
         self._camera_x = x
         self._camera_y = y
 
-    def pan(self, dx: float, dy: float) -> None:
+    def pan(self, dx: float, dy: float) -> None:  # noqa: F811
         """Pan the camera by the given offset."""
         self._target_camera_x += dx
         self._target_camera_y += dy
@@ -925,7 +925,7 @@ class Renderer:
 
             # Add label
             label = np.full((label_h, view_w, 3), 40, dtype=np.uint8)
-            mode_name = mode.name.replace("_", " ")
+            mode.name.replace("_", " ")
             # Simple text rendering would require PIL, so just use background color
 
             # Combine label and view
@@ -1054,7 +1054,7 @@ class CanvasRenderer(Renderer):
     def start(self) -> None:
         """Start the interactive renderer."""
         try:
-            import tkinter as tk
+            import tkinter as tk  # noqa: F401
         except ImportError:
             return  # No Tkinter available
 

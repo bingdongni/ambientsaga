@@ -329,7 +329,7 @@ class BeliefSystem:
             return belief.strength
         else:
             # Create new belief
-            new_id = self.agent_acquires_belief(
+            self.agent_acquires_belief(
                 target_agent_id,
                 source_belief.proposition,
                 source_belief.category,
@@ -396,7 +396,7 @@ class BeliefSystem:
         belief_totals: dict[str, float] = {}
         belief_counts: dict[str, int] = {}
 
-        for belief_id, belief in self._beliefs.items():
+        for _belief_id, belief in self._beliefs.items():
             bh = belief.generate_hash()
             belief_totals[bh] = belief_totals.get(bh, 0.0) + belief.strength
             belief_counts[bh] = belief_counts.get(bh, 0) + 1

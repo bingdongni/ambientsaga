@@ -107,8 +107,8 @@ class EmergentNorms:
                 continue  # Pattern not stable enough
 
             # Get participants
-            participants = set(t.actor_id for t in traces if t.actor_id)
-            participants |= set(t.receiver_id for t in traces if t.receiver_id)
+            participants = {t.actor_id for t in traces if t.actor_id}
+            participants |= {t.receiver_id for t in traces if t.receiver_id}
 
             # Create a norm ID
             norm_id = f"norm_{signal}_{len(self._norms)}"

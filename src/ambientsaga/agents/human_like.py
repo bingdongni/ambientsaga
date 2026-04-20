@@ -271,7 +271,7 @@ class HumanLikeAgent:
 
         for action in actions:
             action_id = action.get('id', '')
-            action_type = action.get('type', '')
+            action.get('type', '')
             expected_outcome = action.get('expected_outcome', 0.5)
             cost = action.get('cost', 0.0)
             risk = action.get('risk', 0.0)
@@ -513,7 +513,7 @@ class HumanLikeAgent:
         """获取社会压力"""
         # 检查是否有冲突
         conflict_count = 0
-        for other_id, trust in self.relationships.items():
+        for _other_id, trust in self.relationships.items():
             if trust < -0.3:
                 conflict_count += 1
 

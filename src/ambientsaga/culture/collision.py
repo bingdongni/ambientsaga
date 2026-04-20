@@ -376,8 +376,8 @@ class CulturalCollisionSystem:
         c_b = self._cultures.get(encounter.culture_b, {})
 
         # Find conflicting beliefs
-        taboos_a = set(c_a.get("taboos", []))
-        taboos_b = set(c_b.get("taboos", []))
+        set(c_a.get("taboos", []))
+        set(c_b.get("taboos", []))
 
         # Find common taboos that conflict (same taboo, different meanings?)
         conflicting_beliefs: tuple[str, str] = ("taboo_conflict", "taboo_conflict")
@@ -448,7 +448,7 @@ class CulturalCollisionSystem:
     ) -> list[CulturalDiffusion]:
         """Simulate cultural diffusion between cultures."""
         c_source = self._cultures.get(source_culture, {})
-        c_target = self._cultures.get(target_culture, {})
+        self._cultures.get(target_culture, {})
 
         diffusions = []
 

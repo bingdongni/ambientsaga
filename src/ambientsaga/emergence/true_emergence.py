@@ -179,7 +179,6 @@ class TrueEmergenceLayer:
         基于使用模式推断
         """
         content = trace.content
-        context = trace.context
 
         # 基于内容类型推断
         if 'resource' in content or 'give' in str(content).lower():

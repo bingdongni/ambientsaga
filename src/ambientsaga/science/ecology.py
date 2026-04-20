@@ -534,7 +534,7 @@ class EcosystemEngine:
     def _simulate_predation(self, eco: Ecosystem, tick: int, dt: float) -> None:
         """Simulate predation in an ecosystem."""
         for chain in eco.food_chains:
-            for i, predator in enumerate(chain.species):
+            for _i, predator in enumerate(chain.species):
                 if predator.trophic_level == TrophicLevel.PRODUCER:
                     continue
 

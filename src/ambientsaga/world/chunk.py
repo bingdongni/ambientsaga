@@ -76,7 +76,6 @@ class Chunk:
 
     def summary(self) -> dict:
         """Get a summary of chunk statistics."""
-        land_mask = self.terrain > 3  # > BEACH
         return {
             "chunk": (self.chunk_x, self.chunk_y),
             "agent_count": self.agent_count,
@@ -312,7 +311,6 @@ class ChunkManager:
         Avoids numpy overhead for common small-radius checks.
         """
         results = []
-        chunk_size = self.chunk_size
 
         for cx in range(min_cx, max_cx + 1):
             for cy in range(min_cy, max_cy + 1):

@@ -28,8 +28,7 @@ from typing import Any
 
 if __name__ == "__main__":
     # Allow running as standalone script
-    from typing import TYPE_CHECKING
-    TYPE_CHECKING = True
+    RUN_AS_SCRIPT = True
 
 
 @dataclass

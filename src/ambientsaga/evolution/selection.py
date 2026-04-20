@@ -455,7 +455,7 @@ def economic_fitness(genome: BehaviorGenome, context: dict) -> float:
     Agents with more resources and wealth get higher fitness.
     """
     resources = context.get("resource_count", 0)
-    wealth = context.get("wealth", 0)
+    context.get("wealth", 0)
     surplus = context.get("surplus", 0)
 
     # Balance between having enough and having surplus

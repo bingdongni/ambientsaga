@@ -195,7 +195,7 @@ class EnhancedRenderer:
         elev_range = elev_max - elev_min if elev_max != elev_min else 1
 
         # 光照方向 (从左上角)
-        light_x, light_y = -0.5, -0.7
+        _light_x, _light_y = -0.5, -0.7
 
         # 逐像素渲染
         step_x = w / canvas_width
