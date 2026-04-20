@@ -31,6 +31,10 @@ from ambientsaga.config import Config, SimulationConfig
 # === Cultural Collision System ===
 from ambientsaga.culture.collision import CulturalCollisionSystem
 
+# === NEW: Social Systems ===
+from ambientsaga.social.settlement import SettlementManager
+from ambientsaga.social.ethnicity import EthnicGroupManager
+
 # === NEW: Ultimate Emergence Systems ===
 from ambientsaga.emergence.butterfly_effects import (
     ButterflyEffectSystem,
@@ -239,6 +243,14 @@ class World:
         # Manages emergent social classes and hierarchies
         self._social_stratification: SocialStratificationSystem | None = None
 
+        # === NEW: Settlement System ===
+        # Manages villages, towns, cities, and territorial control
+        self._settlement_manager: SettlementManager | None = None
+
+        # === NEW: Ethnic Group System ===
+        # Manages ethnic groups, cultures, and cultural identities
+        self._ethnicity_manager: EthnicGroupManager | None = None
+
         # LLM Integration
         self._llm_thread_pool: ThreadPoolExecutor | None = None
         self._llm_enabled: bool = False
@@ -360,6 +372,20 @@ class World:
         # === NEW: Initialize Social Stratification System ===
         # Manages emergent social classes and hierarchies
         self._social_stratification = SocialStratificationSystem(
+            seed=self._config.world.seed or 42
+        )
+
+        # === NEW: Initialize Settlement System ===
+        # Manages villages, towns, cities, and territorial control
+        self._settlement_manager = SettlementManager(
+            world=self,
+            seed=self._config.world.seed or 42
+        )
+
+        # === NEW: Initialize Ethnicity System ===
+        # Manages ethnic groups, cultures, and cultural identities
+        self._ethnicity_manager = EthnicGroupManager(
+            world=self,
             seed=self._config.world.seed or 42
         )
 
@@ -538,6 +564,23 @@ class World:
                     agent_id=agent.entity_id,
                     initial_type="random",
                 )
+            # Assign to ethnic group (handle both Agent types)
+            if self._ethnicity_manager is not None:
+                ethnic_groups = self._ethnicity_manager.get_active_ethnic_groups()
+                if ethnic_groups:
+                    # Assign to a random ethnic group based on position or randomly
+                    target_ethnic = ethnic_groups[self._rng.integers(len(ethnic_groups))]
+                    self._ethnicity_manager.register_agent(agent.entity_id, target_ethnic.ethnic_id)
+                    # Generate physical traits based on ethnic background (if Agent supports it)
+                    if hasattr(agent, 'generate_physical_traits'):
+                        agent.generate_physical_traits(ethnicity=target_ethnic.short_name.lower())
+                    if hasattr(agent, 'ethnic_id'):
+                        agent.ethnic_id = target_ethnic.ethnic_id
+            # Assign to settlement if in range
+            if self._settlement_manager is not None:
+                settlement = self._settlement_manager.get_settlement_at(agent.position)
+                if settlement:
+                    self._settlement_manager.assign_agent(agent.entity_id, settlement.settlement_id)
 
     def remove_agent(self, entity_id: EntityID) -> None:
         """Remove an agent from the world."""

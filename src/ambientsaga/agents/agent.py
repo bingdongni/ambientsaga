@@ -11,6 +11,7 @@ An Agent is an autonomous entity with:
 - Deliberation system (decision routing)
 - Social relationships
 - Economic state
+- Physical appearance (race, ethnicity, traits)
 """
 
 from __future__ import annotations
@@ -28,6 +29,10 @@ from ambientsaga.agents.core import AgentTier
 from ambientsaga.emergence.humanity_layer import (
     AgentHumanityLayer,
     EmotionType,
+)
+from ambientsaga.social.race import (
+    PhysicalTraitGenerator,
+    PhysicalTraits,
 )
 from ambientsaga.types import (
     AgentAttributes,
@@ -200,6 +205,13 @@ class Agent:
     # Lazy-initialized human characteristics
     _humanity_layer: AgentHumanityLayer | None = None
 
+    # Physical appearance traits (race, ethnicity)
+    physical_traits: PhysicalTraits | None = None
+    ethnic_id: str | None = None  # Reference to ethnic group
+
+    # Trait generator (shared across agents for inheritance)
+    _trait_generator: PhysicalTraitGenerator | None = None
+
     def __post_init__(self) -> None:
         if not self.entity_id:
             raise ValueError("entity_id is required")
@@ -240,6 +252,96 @@ class Agent:
         if self._humanity_layer is None:
             self._humanity_layer = AgentHumanityLayer(self)
         return self._humanity_layer
+
+    @property
+    def appearance_description(self) -> str:
+        """Get a human-readable description of this agent's appearance."""
+        if self.physical_traits is None:
+            return "ordinary appearance"
+        return self.physical_traits.get_description()
+
+    # -------------------------------------------------------------------------
+    # Physical Traits
+    # -------------------------------------------------------------------------
+
+    @classmethod
+    def get_trait_generator(cls) -> PhysicalTraitGenerator:
+        """Get or create the shared trait generator."""
+        if not hasattr(cls, "_shared_trait_generator"):
+            cls._shared_trait_generator = PhysicalTraitGenerator()
+        return cls._shared_trait_generator
+
+    def generate_physical_traits(
+        self,
+        ethnicity: str = "default",
+        region: str | None = None,
+    ) -> PhysicalTraits:
+        """Generate initial physical traits based on ethnic/regional background."""
+        generator = self.get_trait_generator()
+        self.physical_traits = generator.generate(
+            ethnicity=ethnicity,
+            region=region,
+        )
+        return self.physical_traits
+
+    def inherit_physical_traits(
+        self,
+        parent1: Agent,
+        parent2: Agent | None = None,
+        mutation_rate: float = 0.1,
+    ) -> PhysicalTraits:
+        """
+        Create physical traits by inheriting from parents.
+
+        Traits are blended with possible mutations.
+        """
+        generator = self.get_trait_generator()
+
+        parent1_traits = parent1.physical_traits
+        if parent1_traits is None:
+            parent1.generate_physical_traits()
+
+        if parent2 is not None:
+            parent2_traits = parent2.physical_traits
+            if parent2_traits is None:
+                parent2.generate_physical_traits()
+        else:
+            parent2_traits = None
+
+        self.physical_traits = generator.inherit(
+            parent1_traits=parent1.physical_traits,
+            parent2_traits=parent2.physical_traits if parent2 else None,
+            mutation_rate=mutation_rate,
+        )
+
+        # Inherit ethnic_id from primary parent
+        self.ethnic_id = parent1.ethnic_id
+
+        return self.physical_traits
+
+    def age_physical_traits(self, years: int) -> PhysicalTraits:
+        """Age physical traits over time."""
+        if self.physical_traits is None:
+            self.generate_physical_traits()
+
+        generator = self.get_trait_generator()
+        self.physical_traits = generator.age_traits(
+            self.physical_traits,
+            years=years,
+        )
+        return self.physical_traits
+
+    def add_distinctive_mark(self, mark_type: str, description: str) -> None:
+        """Add a distinctive mark to this agent's appearance."""
+        if self.physical_traits is None:
+            self.generate_physical_traits()
+
+        generator = self.get_trait_generator()
+        self.physical_traits = generator.add_distinctive_mark(
+            self.physical_traits,
+            mark_type=mark_type,
+            description=description,
+        )
 
     # -------------------------------------------------------------------------
     # Memory
