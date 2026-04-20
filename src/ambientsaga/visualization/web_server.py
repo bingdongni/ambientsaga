@@ -170,7 +170,7 @@ class WebServer:
             self._async_loop = None
 
     async def _start_ws_server(self) -> None:
-        """Start the WebSocket server."""
+        """Start the WebSocket server with HTTP serving via process_request."""
         import websockets
         from websockets.exceptions import ConnectionClosed
 
@@ -226,7 +226,39 @@ class WebServer:
 
         async def start_server() -> None:
             try:
-                async with websockets.serve(handler, self.host, self.port):
+                import websockets
+                from websockets.server import WebSocketServerProtocol
+
+                async def http_handler(process_request, request_path, request_headers):
+                    """Handle HTTP requests by serving the HTML client."""
+                    if request_path == "/" or request_path == "/index.html":
+                        return (
+                            200,
+                            [(b"Content-Type", b"text/html")],
+                            HTML_CLIENT.encode(),
+                        )
+                    elif request_path.startswith("/api/"):
+                        # API endpoint
+                        state = self.world._serialize_world_state()
+                        import json
+                        return (
+                            200,
+                            [(b"Content-Type", b"application/json")],
+                            json.dumps(state).encode(),
+                        )
+                    else:
+                        return (
+                            404,
+                            [(b"Content-Type", b"text/plain")],
+                            b"Not Found",
+                        )
+
+                async with websockets.serve(
+                    handler,
+                    self.host,
+                    self.port,
+                    process_request=http_handler,
+                ):
                     self._running = True
                     # Start heartbeat task
                     heartbeat_task = asyncio.create_task(ping_clients())
@@ -819,9 +851,8 @@ HTML_CLIENT = """<!DOCTYPE html>
         }
 
         function connect() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = protocol + '//' + window.location.host + ':8765';
-            ws = new WebSocket('ws://localhost:8765');
+            const wsPort = window.location.port || 8765;
+            const ws = new WebSocket('ws://' + window.location.hostname + ':' + wsPort);
 
             ws.onopen = () => {
                 document.getElementById('connection-status').textContent = 'CONNECTED';
