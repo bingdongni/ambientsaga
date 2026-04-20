@@ -19,8 +19,9 @@ from collections import defaultdict
 from collections.abc import Callable
 from typing import TYPE_CHECKING
 
+from ambientsaga.agents.core import AgentTier
 from ambientsaga.config import AgentConfig
-from ambientsaga.types import AgentTier, EntityID, Pos2D
+from ambientsaga.types import EntityID, Pos2D
 
 if TYPE_CHECKING:
     from ambientsaga.world.chunk import ChunkManager
@@ -101,15 +102,21 @@ class TierManager:
         self, agent_id: EntityID, temporary: bool = False, duration: int = 100
     ) -> AgentTier:
         """
-        Upgrade an agent to the next tier.
+        Upgrade an agent to the next tier (higher capability).
 
         If temporary=True, the upgrade lasts for `duration` ticks then reverts.
         """
         current = self.get_tier(agent_id)
-        if current.value >= AgentTier.L1_CORE.value:
-            return current  # Already at maximum
 
-        new_tier = AgentTier(current.value - 1)  # Upgrade = lower number
+        # Find next higher tier (lower priority number)
+        all_tiers = sorted(AgentTier, key=lambda t: t.processing_priority)
+        try:
+            current_idx = all_tiers.index(current)
+            if current_idx == 0:
+                return current  # Already at maximum (L1_CORE)
+            new_tier = all_tiers[current_idx - 1]
+        except ValueError:
+            return current  # Shouldn't happen
 
         self._set_tier(agent_id, new_tier, temporary, duration)
 
@@ -123,10 +130,17 @@ class TierManager:
     def downgrade_tier(self, agent_id: EntityID) -> AgentTier:
         """Downgrade an agent to the next lower tier."""
         current = self.get_tier(agent_id)
-        if current.value >= AgentTier.L4_ECOLOGICAL.value:
-            return current
 
-        new_tier = AgentTier(current.value + 1)
+        # Find next lower tier (higher priority number)
+        all_tiers = sorted(AgentTier, key=lambda t: t.processing_priority)
+        try:
+            current_idx = all_tiers.index(current)
+            if current_idx >= len(all_tiers) - 1:
+                return current  # Already at minimum (L4_ECOLOGICAL)
+            new_tier = all_tiers[current_idx + 1]
+        except ValueError:
+            return current  # Shouldn't happen
+
         self._set_tier(agent_id, new_tier, False, 0)
         self._stats["total_downgrades"] += 1
 
@@ -220,8 +234,8 @@ class TierManager:
         radius = 10.0
         for agent, dist in self.world.get_agents_near(pos, radius):
             current_tier = self.get_tier(agent.entity_id)
-            if current_tier.value > AgentTier.L2_FUNCTIONAL.value:
-                # Only upgrade if not already L1 or L2
+            # Only upgrade if not already L1 or L2 (L3 and L4 can be upgraded)
+            if current_tier.processing_priority > AgentTier.L2_FUNCTIONAL.processing_priority:
                 # Probabilistic based on intensity and distance
                 upgrade_prob = intensity * (1.0 - dist / radius) * self.config.upgrade_probability
                 rng = self.world._rng

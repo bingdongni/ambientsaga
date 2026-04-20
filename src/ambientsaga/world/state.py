@@ -2718,7 +2718,7 @@ class World:
             )
 
         with open(path, "wb") as f:
-            msgspec.msgpack.encode(snapshot, f)
+            f.write(msgspec.msgpack.encode(snapshot))
 
     def load(self, path: str | Path) -> None:
         """Load world state from file."""

@@ -15,10 +15,34 @@ from ambientsaga.types import EntityID, Pos2D, ResourceType, Tick
 
 # Agent Tier - determines processing strategy
 class AgentTier(Enum):
-    """Agent processing tier - determines how agent decisions are made."""
-    L1_CORE = "l1_core"          # Full LLM reasoning, few agents
+    """Agent processing tier - determines how agent decisions are made.
+
+    Tier hierarchy (highest to lowest capability):
+    - L1_CORE: Full LLM reasoning, few agents
+    - L2_FUNCTIONAL: Hybrid: embedding + occasional LLM
+    - L3_BACKGROUND: Rule-based, most agents
+    - L4_ECOLOGICAL: Rule-based population dynamics, background processes
+    """
+
+    L1_CORE = "l1_core"           # Full LLM reasoning, few agents
     L2_FUNCTIONAL = "l2_functional"  # Hybrid: embedding + occasional LLM
     L3_BACKGROUND = "l3_background"  # Rule-based, most agents
+    L4_ECOLOGICAL = "l4_ecological"  # Rule-based population dynamics
+
+    @property
+    def is_llm_capable(self) -> bool:
+        """Whether this tier has LLM reasoning capability."""
+        return self in {AgentTier.L1_CORE, AgentTier.L2_FUNCTIONAL}
+
+    @property
+    def processing_priority(self) -> int:
+        """Processing priority (lower = higher priority)."""
+        return {
+            AgentTier.L1_CORE: 0,
+            AgentTier.L2_FUNCTIONAL: 1,
+            AgentTier.L3_BACKGROUND: 2,
+            AgentTier.L4_ECOLOGICAL: 3,
+        }[self]
 
 
 # Agent State

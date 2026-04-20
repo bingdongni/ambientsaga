@@ -43,6 +43,12 @@ import numpy.typing as npt
 # Numeric Types
 # ---------------------------------------------------------------------------
 
+# Note: AgentTier is defined in agents.core to avoid circular imports
+# Import it here for convenient access when needed:
+#   from ambientsaga.types import AgentTier
+# Or use the agents.core module directly:
+#   from ambientsaga.agents.core import AgentTier
+
 FloatArray: TypeAlias = npt.NDArray[np.float64]
 IntArray: TypeAlias = npt.NDArray[np.int32]
 BoolArray: TypeAlias = npt.NDArray[np.bool_]
@@ -173,9 +179,6 @@ class Rectangle:
 # ---------------------------------------------------------------------------
 # Entity Types
 # ---------------------------------------------------------------------------
-
-
-EntityID: TypeAlias = str
 
 
 def new_entity_id() -> EntityID:
@@ -415,29 +418,48 @@ class Season(Enum):
 
 
 class ResourceType(Enum):
-    """Types of resources available in the world."""
+    """Types of resources available in the world.
 
-    # Food sources
+    Note: This enum includes both resource source locations (e.g., HUNTING_GROUNDS)
+    and actual resources (e.g., FOOD, WATER). Code should use the actual resource
+    names for inventory and trade.
+    """
+
+    # Core resources (actual resources)
+    FOOD = auto()
+    WATER = auto()
+    WOOD = auto()
+    STONE = auto()
+
+    # Processed materials
+    TOOLS = auto()
+    WEAPONS = auto()
+    CLOTHING = auto()
+    COPPER = auto()
+    IRON = auto()
+    GOLD = auto()
+
+    # Natural resources (source locations)
     HUNTING_GROUNDS = auto()
     FISHING_WATERS = auto()
     GRAIN_FIELD = auto()
     FRUIT_TREES = auto()
     ROOTS_TUBERS = auto()
+    FLORA = auto()
+    MINERALS = auto()
+    FERTILE_SOIL = auto()
 
-    # Materials
-    WOOD = auto()
-    STONE = auto()
+    # Raw materials
     CLAY = auto()
     FIBER = auto()
     FLAX = auto()
     COTTON = auto()
 
-    # Minerals
+    # Ores
     COPPER_ORE = auto()
     TIN_ORE = auto()
     IRON_ORE = auto()
     COAL = auto()
-    GOLD_ORE = auto()
     SILVER_ORE = auto()
     GEMSTONES = auto()
 
@@ -449,61 +471,79 @@ class ResourceType(Enum):
     HERBS = auto()
 
     # Energy
-    FRESH_WATER = auto()
     HOT_SPRING = auto()  # Geothermal
 
     @property
     def is_food(self) -> bool:
         return self in {
+            ResourceType.FOOD,
             ResourceType.HUNTING_GROUNDS,
             ResourceType.FISHING_WATERS,
             ResourceType.GRAIN_FIELD,
             ResourceType.FRUIT_TREES,
             ResourceType.ROOTS_TUBERS,
+            ResourceType.FLORA,
         }
 
     @property
     def is_mineral(self) -> bool:
         return self in {
-            ResourceType.COPPER_ORE,
+            ResourceType.COPPER,
             ResourceType.TIN_ORE,
-            ResourceType.IRON_ORE,
+            ResourceType.IRON,
             ResourceType.COAL,
-            ResourceType.GOLD_ORE,
+            ResourceType.GOLD,
             ResourceType.SILVER_ORE,
             ResourceType.GEMSTONES,
             ResourceType.STONE,
             ResourceType.CLAY,
+            ResourceType.MINERALS,
         }
 
     @property
     def base_value(self) -> float:
         """Base trade value of this resource."""
         values = {
+            # Core resources
+            ResourceType.FOOD: 1.0,
+            ResourceType.WATER: 0.5,
+            ResourceType.WOOD: 1.0,
+            ResourceType.STONE: 1.5,
+            # Processed materials
+            ResourceType.TOOLS: 10.0,
+            ResourceType.WEAPONS: 20.0,
+            ResourceType.CLOTHING: 8.0,
+            ResourceType.COPPER: 15.0,
+            ResourceType.IRON: 25.0,
+            ResourceType.GOLD: 100.0,
+            # Source locations (lower value as they're locations, not actual resources)
             ResourceType.HUNTING_GROUNDS: 2.0,
             ResourceType.FISHING_WATERS: 2.0,
             ResourceType.GRAIN_FIELD: 1.5,
             ResourceType.FRUIT_TREES: 1.5,
             ResourceType.ROOTS_TUBERS: 1.0,
-            ResourceType.WOOD: 1.0,
-            ResourceType.STONE: 1.5,
+            ResourceType.FLORA: 0.8,
+            ResourceType.MINERALS: 5.0,
+            ResourceType.FERTILE_SOIL: 1.0,
+            # Raw materials
             ResourceType.CLAY: 0.5,
             ResourceType.FIBER: 0.8,
             ResourceType.FLAX: 1.0,
             ResourceType.COTTON: 1.2,
+            # Ores
             ResourceType.COPPER_ORE: 5.0,
             ResourceType.TIN_ORE: 5.0,
             ResourceType.IRON_ORE: 8.0,
             ResourceType.COAL: 3.0,
-            ResourceType.GOLD_ORE: 20.0,
             ResourceType.SILVER_ORE: 15.0,
             ResourceType.GEMSTONES: 25.0,
+            # Trade goods
             ResourceType.SALT: 4.0,
             ResourceType.SPICES: 12.0,
             ResourceType.FUR: 6.0,
             ResourceType.HONEY: 2.0,
             ResourceType.HERBS: 3.0,
-            ResourceType.FRESH_WATER: 0.5,
+            # Energy
             ResourceType.HOT_SPRING: 2.0,
         }
         return values.get(self, 1.0)
@@ -644,45 +684,8 @@ class WorldMap:
 # ---------------------------------------------------------------------------
 
 
-class AgentTier(Enum):
-    """
-    Agent tier classification.
-
-    Tier determines LLM usage and reasoning depth:
-    - NPC: Simple rule-based or lightweight model
-    - Person: Individual agent with full reasoning
-    - Leader: Key decision-makers with deeper reasoning
-    - Legend: Major historical figures with enhanced capabilities
-    """
-
-    NPC = 0
-    PERSON = 1
-    LEADER = 2
-    LEGEND = 3
-
-    @property
-    def reasoning_depth(self) -> int:
-        """How many reasoning steps this tier uses."""
-        return {
-            AgentTier.NPC: 0,
-            AgentTier.PERSON: 2,
-            AgentTier.LEADER: 3,
-            AgentTier.LEGEND: 4,
-        }.get(self, 1)
-
-    @property
-    def uses_llm(self) -> bool:
-        return self in {AgentTier.PERSON, AgentTier.LEADER, AgentTier.LEGEND}
-
-    @property
-    def memory_capacity(self) -> int:
-        """Max number of memories to retain."""
-        return {
-            AgentTier.NPC: 10,
-            AgentTier.PERSON: 50,
-            AgentTier.LEADER: 200,
-            AgentTier.LEGEND: 500,
-        }.get(self, 50)
+# Agent types are defined in agents.core to avoid circular imports
+# This ensures AgentTier is consistent across the codebase
 
 
 class Attribute(Enum):

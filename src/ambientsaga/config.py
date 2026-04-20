@@ -760,6 +760,24 @@ class SimulationConfig:
         """Agents per square kilometer."""
         return self.total_agents() / self.world.total_km2
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize configuration to a dictionary (for JSON export)."""
+        import dataclasses
+
+        def _to_dict(obj: Any) -> Any:
+            if dataclasses.is_dataclass(obj):
+                return {k: _to_dict(v) for k, v in dataclasses.asdict(obj).items()}
+            elif isinstance(obj, Path):
+                return str(obj)
+            elif isinstance(obj, (list, tuple)):
+                return [_to_dict(item) for item in obj]
+            elif isinstance(obj, dict):
+                return {k: _to_dict(v) for k, v in obj.items()}
+            else:
+                return obj
+
+        return _to_dict(self)
+
 
 # ---------------------------------------------------------------------------
 # Preset Configurations
